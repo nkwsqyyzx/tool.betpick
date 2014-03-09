@@ -1,0 +1,63 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+
+<head>
+    <title>
+
+    </title>
+</head>
+
+<script type="text/javascript" src="http://odds2.zso8.com/html/match.html" charset='utf-8'></script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        String.format = function () {
+            if (arguments.length == 0) {
+                return null;
+            }
+            var str = arguments[0];
+            for (var i = 1; i < arguments.length; i++) {
+                var re = new RegExp('\\{' + (i - 1) + '\\}', 'gm');
+                str = str.replace(re, arguments[i]);
+            }
+            return str;
+        }
+        var matches = [];
+        var tr = '';
+        for (var i = 0; i < m.length; i++) {
+            a = m[i];
+            b = [];
+            b.push(a[0]);
+            b.push(a[4]);
+            b.push(a[7]);
+            b.push(a[10]);
+            b.push(a[14]);
+            b.push(a[16]);
+            b.push(a[17]);
+            matches.push(b);
+
+            link = String.format("<a href='{0}' target='_blank'>查看</a>", b[0]);
+
+            at = String.format("<td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td>", b[2], b[1], b[3], b[4], link);
+            tr = String.format("{0}<tr>{1}</tr>", tr, at);
+        }
+        var table = String.format("{0}", tr);
+        $('#tb_body').html(table);
+    });
+</script>
+
+<body>
+    <table border='1'>
+        <tr>
+            <th width='140px' align='center'>时间</th>
+            <th width='80px' align='center'>主队</th>
+            <th width='100px' align='center'>客队</th>
+            <th width='100px' align='center'>查看</th>
+            <th width='40px' align='center'>查看</th>
+        </tr>
+        <tbody id='tb_body'></tbody>
+    </table>
+</body>
+
+</html>

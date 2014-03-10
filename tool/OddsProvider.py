@@ -4,8 +4,8 @@ import os.path
 import re
 from bs4 import BeautifulSoup
 import codecs
-from MatchOdds import MatchOdds
 import time
+from tool.MatchOdds import MatchOdds
 import random
 
 escape = urllib.parse.quote

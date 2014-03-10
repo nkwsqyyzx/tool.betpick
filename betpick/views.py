@@ -5,32 +5,15 @@ from django.http import HttpResponse
 from tool.OddsProvider import OddsProvider
 
 def odds(request,mid):
-    p = OddsProvider(mid)
-    rs = p.getResult()
-    tp = """
-    <html>
-    <head><title>Ordering notice</title></head>
-
-    <body>
-
-    <ul>
-    {% for item in r.asian %}
-        <li>{{ item.1 }}</li>
-    {% endfor %}
-    </ul>
-
-    </body>
-    </html>
-    """
-
-    t = Template(tp)
-    rr = None
+    oddslist = []
+    rs = OddsProvider(mid).getResult()
     for r in rs:
-        rr = r
-        break
-    c = Context({'r': rr})
+        oddslist.append(r)
 
-    return HttpResponse(t.render(c))
+    c = Context({'oddslist': oddslist})
+    t = get_template('oddslist.html')
+    html = t.render(c)
+    return HttpResponse(html)
 
 def home(request):
     t = get_template('home.html')

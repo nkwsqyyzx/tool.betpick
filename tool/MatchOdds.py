@@ -2,6 +2,10 @@
 
 class MatchOdds:
     def __init__(self):
+        # 主队
+        self.home = ''
+        # 客队
+        self.away = ''
         # 公司名
         self.company = ''
         # 亚盘水位

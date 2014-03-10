@@ -1,0 +1,136 @@
+{% load staticfiles %}
+<html>
+<head><title>Ordering notice</title></head>
+
+<script type="text/javascript" src='{% static "amline/swfobject.js" %}'></script>
+<script language="javascript">
+function toggle(id) {
+    var ele = document.getElementById(id);
+    if (ele.style.display == "block") {
+        ele.style.display = "none";
+    } else {
+        ele.style.display = "block";
+    }
+}
+
+String.format = function () {
+    if (arguments.length == 0) {
+        return null;
+    }
+    var str = arguments[0];
+    for (var i = 1; i < arguments.length; i++) {
+        var re = new RegExp('\\{' + (i - 1) + '\\}', 'gm');
+        str = str.replace(re, arguments[i]);
+    }
+    return str;
+}
+
+function formatData(obj) {
+    r = "<chart><series>{0}</series><graphs><graph gid='1' visible_in_legend='false'>{1}</graph></graphs></chart>";
+
+    sv = '';
+    gv = '';
+    as = [];
+    for (var i = obj.asian.length - 1; i >= 0; i--) {
+        as.push(obj.asian[i]);
+    }
+    lp = '';
+    for (var i = 0; i < as.length; i++) {
+        if (i == 0) {
+            sv = String.format("<value xid='0' event_start='event0' event_color='#FFFF00'>{0}</value>", as[i][0]);
+            gv = String.format("<value xid='0' description='{1}' bullet_color='#009900' bullet_size='8'>{0}</value>", as[i][1], as[i][2]);
+            lp = as[i][2];
+            continue;
+        }
+
+        sv = sv + String.format("<value xid='{0}' event_color='#FFFF00'>{1}</value>", i, as[i][0]);
+        if (lp != '' && lp != as[i][2]) {
+            gv = gv + String.format("<value xid='{0}' bullet_color='#009900' bullet_size='8' description='{1}'>{2}</value>", i, as[i][2], as[i][1]);
+        } else {
+            gv = gv + String.format("<value xid='{0}' description='{1}'>{2}</value>", i, as[i][2], as[i][1]);
+        }
+        lp = as[i][2];
+    }
+    return String.format(r, sv, gv);
+}
+
+function formatSetting(obj) {
+    r = "<settings><decimals_separator>.</decimals_separator><labels><label><x>40</x><y>20</y><width>955</width><align>left</align><text_color>#FA7000</text_color><text_size>15</text_size><text><![CDATA[<b><b>{0}: {1} VS {2} 赔率变化图</b></b>]]></text></label></labels><graphs><graph gid='1'><bullet>round</bullet><bullet_size>5</bullet_size></graph></graphs></settings>";
+    return String.format(r, obj.company, obj.home, obj.away);
+}
+
+function draw(id, obj) {
+    try {
+        var so = new SWFObject("{% static 'amline/amline.swf' %}", "amline", "940", "400", "8", "#FFFFFF");
+        so.addVariable("path", "{% static '/amline/' %}");
+        so.addVariable("chart_data", encodeURIComponent(formatData(obj)));
+        so.addVariable("chart_settings", encodeURIComponent(formatSetting(obj)));
+        so.write(id);
+    } catch (e) {
+        alert(e);
+    }
+}
+</script>
+
+<style type="text/css">
+.wrap {
+    float:left;
+    width:100%;
+    margin:0 auto;
+}
+.left_col {
+    float:left;
+    width:30%;
+}
+.right_col {
+    float:right;
+    width:70%;
+}
+</style>
+
+<body>
+
+{% for r in oddslist %}
+{% if r.asian %}
+<script>
+var a = {};
+a.home = '{{ r.home }}';
+a.away = '{{ r.away }}';
+a.company = '{{ r.company }}';
+a.asian = [];
+{% for item in r.asian %} a.asian.push(['{{ item.0 }}','{{ item.1 }}','{{ item.2 }}','{{ item.3 }}']); {% endfor %}
+</script>
+<ul>
+    <li>{{ r.home }} vs {{ r.away }} <a href='javascript:toggle("{{ r.company }}")'>{{ r.company }}</a>  走势</li>
+</ul>
+<div id='{{ r.company }}' style="display: block" class='wrap'>
+    <div id='tb_{{ r.company }}' class='left_col'>
+        <a width='100px' href='javascript:toggle("tbody_{{ r.company }}")'>切换</a>
+        <div id='tbody_{{ r.company }}' style='display: block'>
+            <table border='1px'>
+                <tr>
+                    <th>时间</th>
+                    <th>{{ r.home }}</th>
+                    <th>盘口</th>
+                    <th>{{ r.away }}</th>
+                </tr>
+                {% for item in r.asian %}
+                <tr>
+                    {% for value in item %}
+                    <td align='center'>{{ value }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+    <div class='right_col'>
+        <div id='swf_{{ r.company }}'></div>
+    </div>
+    <script language="javascript">draw('swf_{{ r.company }}',a);</script>
+</div>
+{% endif %}
+{% endfor %}
+
+</body>
+</html>

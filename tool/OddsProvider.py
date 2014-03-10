@@ -10,7 +10,7 @@ import random
 
 escape = urllib.parse.quote
 
-debug = 1
+release = 1
 delay = 1
 
 class OddsProvider():
@@ -53,16 +53,31 @@ class OddsProvider():
             a = [r for r in pairs if r[0] in companyFilter]
             for p in a:
                 yield self.__getCompanyData(p)
-                if delay:
-                    time.sleep(random.randint(1000,3000) / 1000.0)
         else:
             for p in pairs:
                 yield self.__getCompanyData(p)
-                if delay:
-                    time.sleep(random.randint(1000,3000) / 1000.0)
 
     def __getHtml(self,u):
-        return urllib.request.urlopen(u).read().decode('UTF-8')
+        if not release:
+            import hashlib
+            m = hashlib.md5()
+            m.update(u.encode())
+            md5value=m.hexdigest()
+
+            fpath = './data/{0}.html'.format(md5value)
+            if os.path.exists(fpath):
+                with codecs.open(fpath,'r','utf-8') as f:
+                    return f.read()
+            else:
+                html = urllib.request.urlopen(u).read().decode('UTF-8')
+                if not os.path.exists('./data/'):
+                    os.makedirs('./data/')
+                with codecs.open(fpath, 'a+', 'utf-8') as outfile:
+                    outfile.write(html)
+                return html
+        else:
+            html = urllib.request.urlopen(u).read().decode('UTF-8')
+            return html
 
 
     def __parseTwoColumn(self, p, source, rs):
@@ -78,7 +93,7 @@ class OddsProvider():
 
     def __getAsianOdds(self, p, ec, mid, cid, t1, t2, m):
         uri = 'http://www.zso8.com/app/midDetailA.asp?a=1&id={0}&cid={1}&t1={2}&t2={3}&Company={4}'.format(mid, cid, t1, t2, ec)
-        if debug:
+        if release:
             source = self.__getHtml(uri)
         else:
             source = """
@@ -90,18 +105,19 @@ class OddsProvider():
 
     def __getOverOdds(self, p, ec, mid, cid, t1, t2, m):
         uri = 'http://www.zso8.com/app/midDetailU.asp?id={0}&cid={1}&t1={2}&t2={3}&Company={4}'.format(mid, cid, t1, t2, ec)
-        if debug:
+        if release:
             source = self.__getHtml(uri)
         else:
             source = """
         <html><head><meta http-equiv=Content-Type content=text/html; charset=utf-8><title>查尔顿 VS 牛津联队 - 澳门大小盘走势</title><style>tr,td{font-family: 'Tahoma', '宋体';font-size: 12px;}.font12 {font-family: 'Tahoma', '宋体';font-size: 12px;}.font13 {font-family: 'Tahoma', '宋体';font-size: 13px;}</style></head><body  leftmargin='1' topmargin='1' bgcolor=#ffffff><table width=390  border=0 align=center cellpadding=1 cellspacing=1 bgcolor=#bbbbbb><tbody><tr><td colspan='4' align='center' style='background-color:#cc3300;color:white;font-size:14px;'>查尔顿VS牛津联队--澳门 - 大小盘走势</td></tr><tr align=center bgcolor=#ffffaa class=font13 height=24><td width='120' align='center'><b><FONT color=#00000>变化时间</font></b></td><td><b><FONT color=#000000>大球</font></b></td><td><b><FONT color=#000000>盘口</font></b></td><td><b><FONT color=#000000>小球</font></b></td></tr><tr align=center bgcolor=#ffffcc class=font13 height=24><td width='120'><FONT color=#00000>&nbsp;&nbsp;市场倾向→</font></td><td><FONT color=#000000 title='主队投注比例'>170000</font></td><td><FONT color=#000000 title='两队投注比例百分比(仅供参考)'>43.59%/56.41%</font></td><td><FONT color=#000000 title='客队投注比例'>220000</font></td></tr><tr align=center bgcolor=#ffffff><td height=22 class=font12 align=left>&nbsp;&nbsp;01-15 03:44:48</td><td><font color='red'><b>1.00</b></font></td><td>2.5 球</td><td> <font color='green'><b>0.70</b></font></td></tr><tr align=center bgcolor=#f1f7f1><td height=22 class=font12 align=left>&nbsp;&nbsp;01-14 21:35:51</td><td><font color='green'><b>0.88</b></font></td><td>2.5 球</td><td> <font color='red'><b>0.82</b></font></td></tr><tr align=center bgcolor=#ffffff><td height=22 class=font12 align=left>&nbsp;&nbsp;01-14 11:27:25</td><td><font color='red'><b>0.90</b></font></td><td>2.5 球</td><td> <font color='green'><b>0.80</b></font></td></tr><tr align=center bgcolor=#f1f7f1><td height=22 class=font12 align=left>&nbsp;&nbsp;01-06 17:42:51</td><td><font color='green'><b>0.85</b></font></td><td>2.5 球</td><td> <font color='red'><b>0.85</b></font></td></tr><tr align=center bgcolor=#ffffff><td height=22 class=font12 align=left>&nbsp;&nbsp;01-03 17:02:52</td><td><font color='red'><b>1.00</b></font></td><td>2.5/3 球</td><td> <font color='green'><b>0.70</b></font></td></tr><tr align=center bgcolor=#f1f7f1><td height=22 class=font12 align=left>&nbsp;&nbsp;12-31 18:49:13</td><td><font color='black'><b>0.95</b></font></td><td>2.5/3 球</td><td> <font color='black'><b>0.75</b></font></td></tr></tbody></table></body></html>
         """
+        soup = BeautifulSoup(source)
         self.__parseTwoColumn(p, source, m.over)
 
 
     def __getEuroOdds(self, ec, mid, cid, t1, t2, m):
         uri = 'http://www.zso8.com/app/midDetailE.asp?id={0}&cid={1}&t1={2}&t2={3}&Company={4}'.format(mid, cid, t1, t2, ec)
-        if debug:
+        if release:
             source = self.__getHtml(uri)
         else:
             source = """
@@ -128,6 +144,9 @@ class OddsProvider():
         t2 = escape(p[4])
 
         m = MatchOdds()
+        m.home = p[3]
+        m.away = p[4]
+
         self.__getAsianOdds(p, ec, mid, cid, t1, t2, m)
         self.__getOverOdds(p, ec, mid, cid, t1, t2, m)
         self.__getEuroOdds(ec, mid, cid, t1, t2, m)

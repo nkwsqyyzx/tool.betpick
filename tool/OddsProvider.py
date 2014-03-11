@@ -10,6 +10,7 @@ import random
 
 escape = urllib.parse.quote
 
+cache = 1
 release = 1
 delay = 1
 
@@ -58,7 +59,7 @@ class OddsProvider():
                 yield self.__getCompanyData(p)
 
     def __getHtml(self,u):
-        if not release:
+        if cache:
             import hashlib
             m = hashlib.md5()
             m.update(u.encode())

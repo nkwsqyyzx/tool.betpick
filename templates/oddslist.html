@@ -2,6 +2,7 @@
 <html>
 <head><title>{{ oddslist.1.home }} VS {{ oddslist.1.away }} 各家赔率走势</title></head>
 
+<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
 <script type="text/javascript" src='{% static "amline/swfobject.js" %}'></script>
 <script language="javascript">
 function toggle(id) {
@@ -59,7 +60,8 @@ function formatSetting(obj) {
     return String.format(r, obj.company, obj.home, obj.away);
 }
 
-function draw(id, obj) {
+function drawFlash(id,obj) {
+    id = String.format("swf_{0}",id);
     try {
         var so = new SWFObject("{% static 'amline/amline.swf' %}", "amline", "940", "400", "8", "#FFFFFF");
         so.addVariable("path", "{% static '/amline/' %}");
@@ -69,6 +71,39 @@ function draw(id, obj) {
     } catch (e) {
         alert(e);
     }
+}
+
+function drawTbody(id,obj) {
+    selector = $("#tbody_" + id);
+    tbHtml = '';
+    htmlFormat = '<tr><td align="center">{0}</td><td align="center">{1}</td><td align="center">{2}</td><td align="center">{3}</td></tr>';
+    pa1 = 0;
+    a1 = '';
+    for (var i = 0;i<obj.asian.length;i++){
+        a = obj.asian[i];
+        a1 = a[1];
+        if (i < obj.asian.length - 1){
+            pa1 = parseFloat(obj.asian[i+1][1]);
+            if (parseFloat(a[1]) < pa1){
+                a1 = '<font color="green"><b>' + a1 + "</b></font>";
+            }
+            else{
+                a1 = '<font color="red"><b>' + a1 + "</b></font>";
+            }
+        }
+        else{
+            a1 = '<b>' + a1 + "</b>";
+            pa1 = 0;
+        }
+        line = String.format(htmlFormat,a[0],a1,a[2],'<b>' + a[3] + '</b>');
+        tbHtml = tbHtml + line;
+    }
+    selector.html(tbHtml);
+}
+
+function draw(id, obj) {
+    drawFlash(id,obj);
+    drawTbody(id,obj);
 }
 </script>
 
@@ -105,8 +140,8 @@ a.asian = [];
 </ul>
 <div id='{{ r.company }}' style="display: block" class='wrap'>
     <div id='tb_{{ r.company }}' class='left_col'>
-        <a width='100px' href='javascript:toggle("tbody_{{ r.company }}")'>切换</a>
-        <div id='tbody_{{ r.company }}' style='display: block'>
+        <a width='100px' href='javascript:toggle("table_div_id_{{ r.company }}")'>切换</a>
+        <div id='table_div_id_{{ r.company }}' style='display: block'>
             <div style="overflow: auto; max-height: 300px;">
                 <table border='1px'>
                     <tr>
@@ -115,13 +150,8 @@ a.asian = [];
                         <th>盘口</th>
                         <th>{{ r.away }}</th>
                     </tr>
-                    {% for item in r.asian %}
-                    <tr>
-                        {% for value in item %}
-                        <td align='center'>{{ value }}</td>
-                        {% endfor %}
-                    </tr>
-                    {% endfor %}
+                    <tbody id='tbody_{{ r.company }}'>
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -129,7 +159,7 @@ a.asian = [];
     <div class='right_col'>
         <div id='swf_{{ r.company }}'></div>
     </div>
-    <script language="javascript">draw('swf_{{ r.company }}',a);</script>
+    <script language="javascript">draw('{{ r.company }}',a);</script>
 </div>
 {% endif %}
 {% endfor %}

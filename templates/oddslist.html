@@ -107,21 +107,23 @@ a.asian = [];
     <div id='tb_{{ r.company }}' class='left_col'>
         <a width='100px' href='javascript:toggle("tbody_{{ r.company }}")'>切换</a>
         <div id='tbody_{{ r.company }}' style='display: block'>
-            <table border='1px'>
-                <tr>
-                    <th>时间</th>
-                    <th>{{ r.home }}</th>
-                    <th>盘口</th>
-                    <th>{{ r.away }}</th>
-                </tr>
-                {% for item in r.asian %}
-                <tr>
-                    {% for value in item %}
-                    <td align='center'>{{ value }}</td>
+            <div style="overflow: auto; max-height: 300px;">
+                <table border='1px'>
+                    <tr>
+                        <th>时间</th>
+                        <th>{{ r.home }}</th>
+                        <th>盘口</th>
+                        <th>{{ r.away }}</th>
+                    </tr>
+                    {% for item in r.asian %}
+                    <tr>
+                        {% for value in item %}
+                        <td align='center'>{{ value }}</td>
+                        {% endfor %}
+                    </tr>
                     {% endfor %}
-                </tr>
-                {% endfor %}
-            </table>
+                </table>
+            </div>
         </div>
     </div>
     <div class='right_col'>

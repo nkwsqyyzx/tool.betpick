@@ -4,6 +4,7 @@
 
 <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
 <script type="text/javascript" src='{% static "amline/swfobject.js" %}'></script>
+<script type="text/javascript" src='{% static "tools/helper.js" %}'></script>
 <script language="javascript">
 function toggle(id) {
     var ele = document.getElementById(id);
@@ -60,7 +61,7 @@ function formatSetting(obj) {
     return String.format(r, obj.company, obj.home, obj.away);
 }
 
-function drawFlash(id,obj) {
+function drawFlash(id,obj,i) {
     id = String.format("swf_{0}",id);
     try {
         var so = new SWFObject("{% static 'amline/amline.swf' %}", "amline", "940", "400", "8", "#FFFFFF");
@@ -73,10 +74,109 @@ function drawFlash(id,obj) {
     }
 }
 
-function drawTbody(id,obj) {
+var tipsobj;
+function showTooltip(e,i,o){
+    if (!tipsobj) {
+        tipsobj = $("<div></div>");
+        $("body").append(tipsobj);
+    }
+    else {
+        tipsobj.show();
+    }
+    var coordinates = { "x": 0, "y": 0 };
+    if (e.pageX || e.pageY) {
+        coordinates.x = e.pageX;
+        coordinates.y = e.pageY;
+    }
+    else {
+        coordinates.x = e.clientX + document.body.scrollLeft - document.body.clientLeft;
+        coordinates.y = e.clientY + document.documentElement.scrollTop;
+    }
+    coordinates.x += 20;
+    cp = oddslist[i];
+
+    ct = cp.asian[o][0];
+    st = timeByOffset(ct,-120*60);
+    et = timeByOffset(ct,120*60);
+
+    var h = [];
+    h.push('<table width="100%" cellspacing="0" cellpadding="0" bgcolor="#CEABCD" border="1px">');
+    h.push('<tr height="20px">');
+    h.push('<th bgcolor="#CEFFCD" align="center" width="85px">时间</th>');
+    h.push('<th bgcolor="#CEFFCD" align="center" width="10px">主</th>');
+    h.push('<th bgcolor="#CEFFCD" align="center" width="10px">和</th>');
+    h.push('<th bgcolor="#CEFFCD" align="center" width="10px">负</th>');
+    h.push('<th bgcolor="#CEFFCD" align="center" width="10px">返还</th>');
+    h.push('</tr>');
+    m = euros(cp,ct,st,et);
+    for(var i = 0;i<m.m.length;i++){
+        b = m.m[i];
+        h.push('<tr height="20px">');
+        h.push('<td bgcolor="#9EABCD">' + b[0] + '</td>');
+        h.push('<td bgcolor="#9EABCD">' + b[1] + '</td>');
+        h.push('<td bgcolor="#9EABCD">' + b[2] + '</td>');
+        h.push('<td bgcolor="#9EABCD">' + b[3] + '</td>');
+        h.push('<td bgcolor="#9EABCD">' + b[4] + '</td>');
+        h.push('</tr>');
+    }
+    if (m.m.length == 0 && m.ist >= 0 && m.iet >=0 ){
+        for (var i = m.ist;i<=m.iet;i++){
+            b = cp.euro[i];
+            h.push('<tr height="20px">');
+            h.push('<td bgcolor="#9EABCD">' + b[0] + '</td>');
+            h.push('<td bgcolor="#9EABCD">' + b[1] + '</td>');
+            h.push('<td bgcolor="#9EABCD">' + b[2] + '</td>');
+            h.push('<td bgcolor="#9EABCD">' + b[3] + '</td>');
+            h.push('<td bgcolor="#9EABCD">' + b[4] + '</td>');
+            h.push('</tr>');
+        }
+    }
+    h.push('</table>');
+    tipsobj.html(h.join(''));
+    tipsobj.css({ "position": "absolute", "width": "319px", "z-index": "999", "left": coordinates.x + "px", "top": coordinates.y + "px" });
+    if (window.event) { e.cancelBubble = true; }
+    return false;
+}
+
+function euros(obj,ct,st,et){
+    var m = [];
+    ist = -1;
+    iet = -1;
+    for(var i=0;i<obj.euro.length;i++){
+        a = obj.euro[i];
+        if (a[0]<=et && a[0]>=st){
+            m.push(a);
+        }
+        if (ist < 0 && ct >= a[0]){
+            ist = i;
+        }
+        if (iet < 0 && ct < a[0]){
+            iet = i;
+        }
+    }
+
+    if (m.length == 0 && iet < 0){
+        // 欧赔是很久以前变化的.
+        iet = obj.euro.length - 1;
+        ist = (iet > 3) ?(iet -3):0;
+    }
+
+    return {"ist":ist,"iet":iet,"m":m};
+}
+
+function hidetips(obj) {
+    if (window.event) {
+        e = window.event;
+        e.cancelBubble = true;
+    }
+    tipsobj.hide();
+    return false;
+}
+
+function drawTbody(id,obj,index) {
     selector = $("#tbody_" + id);
     tbHtml = '';
-    htmlFormat = '<tr><td align="center">{0}</td><td align="center">{1}</td><td align="center">{2}</td><td align="center">{3}</td></tr>';
+    htmlFormat = '<tr height="20px"><td align="center">{0}</td><td align="center" onmouseout="hidetips(this);" onmouseover="showTooltip(event,'+index+',{4})">{1}</td><td align="center">{2}</td><td align="center">{3}</td></tr>';
     pa1 = 0;
     a1 = '';
     for (var i = 0;i<obj.asian.length;i++){
@@ -95,15 +195,15 @@ function drawTbody(id,obj) {
             a1 = '<b>' + a1 + "</b>";
             pa1 = 0;
         }
-        line = String.format(htmlFormat,a[0],a1,a[2],'<b>' + a[3] + '</b>');
+        line = String.format(htmlFormat,a[0],a1,a[2],'<b>' + a[3] + '</b>',i);
         tbHtml = tbHtml + line;
     }
     selector.html(tbHtml);
 }
 
-function draw(id, obj) {
-    drawFlash(id,obj);
-    drawTbody(id,obj);
+function draw(id, obj,i) {
+    drawFlash(id,obj,i);
+    drawTbody(id,obj,i);
 }
 </script>
 
@@ -125,6 +225,10 @@ function draw(id, obj) {
 
 <body>
 
+<script>
+    var oddslist = [];
+</script>
+
 {% for r in oddslist %}
 {% if r.asian %}
 <script>
@@ -134,6 +238,9 @@ a.away = '{{ r.away }}';
 a.company = '{{ r.company }}';
 a.asian = [];
 {% for item in r.asian %} a.asian.push(['{{ item.0 }}','{{ item.1 }}','{{ item.2 }}','{{ item.3 }}']); {% endfor %}
+a.euro = [];
+{% for item in r.euro %} a.euro.push(['{{ item.0 }}','{{ item.1 }}','{{ item.2 }}','{{ item.3 }}','{{ item.4 }}']); {% endfor %}
+oddslist.push(a);
 </script>
 <ul>
     <li>{{ r.home }} vs {{ r.away }} <a href='javascript:toggle("{{ r.company }}")'>{{ r.company }}</a>  走势</li>
@@ -143,7 +250,7 @@ a.asian = [];
         <a width='100px' href='javascript:toggle("table_div_id_{{ r.company }}")'>切换</a>
         <div id='table_div_id_{{ r.company }}' style='display: block'>
             <div style="overflow: auto; max-height: 300px;">
-                <table border='1px'>
+                <table cellspacing="0" cellpadding="0" border='1px'>
                     <tr>
                         <th>时间</th>
                         <th>{{ r.home }}</th>
@@ -159,10 +266,16 @@ a.asian = [];
     <div class='right_col'>
         <div id='swf_{{ r.company }}'></div>
     </div>
-    <script language="javascript">draw('{{ r.company }}',a);</script>
 </div>
 {% endif %}
 {% endfor %}
+
+<script language="javascript">
+for (var i = 0;i<oddslist.length;i++){
+    cp = oddslist[i];
+    draw(cp.company,cp,i);
+}
+</script>
 
 </body>
 </html>

@@ -66,7 +66,7 @@ class OddsProvider():
             md5value=m.hexdigest()
 
             fpath = './data/{0}.html'.format(md5value)
-            if os.path.exists(fpath):
+            if os.path.exists(fpath) and time.time() - os.path.getmtime(fpath) < (30 * 60):
                 with codecs.open(fpath,'r','utf-8') as f:
                     return f.read()
             else:

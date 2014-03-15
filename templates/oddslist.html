@@ -75,7 +75,7 @@ function drawFlash(id,obj,i) {
 }
 
 var tipsobj;
-function showTooltip(e,i,o){
+function showTooltip(e,i,o,k){
     if (!tipsobj) {
         tipsobj = $("<div></div>");
         $("body").append(tipsobj);
@@ -115,7 +115,13 @@ function showTooltip(e,i,o){
     h.push('<th bgcolor="#CEFFCD" align="center" width="10px">负</th>');
     h.push('<th bgcolor="#CEFFCD" align="center" width="10px">返还</th>');
     h.push('</tr>');
-    m = euros(cp,ct,st,et);
+    var m = {};
+    if (k){
+        m = euros(cp,ct,st,et);
+    }
+    else{
+        m.m = cp.euro;
+    }
     for(var i = 0;i<m.m.length;i++){
         b = m.m[i];
         b1 = (i < m.m.length - 1)?m.m[i+1]:false;
@@ -201,7 +207,7 @@ function hidetips(obj) {
 function drawTbody(id,obj,index) {
     selector = $("#tbody_" + id);
     tbHtml = '';
-    htmlFormat = '<tr height="20px"><td align="center">{0}</td><td align="center" onmouseover="showTooltip(event,'+index+',{4})">{1}</td><td align="center">{2}</td><td align="center">{3}</td></tr>';
+    htmlFormat = '<tr height="20px"><td align="center">{0}</td><td align="center" onmouseover="showTooltip(event,'+index+',{4},1)">{1}</td><td align="center">{2}</td><td align="center"{3}</td></tr>';
     pa1 = 0;
     a1 = '';
     for (var i = 0;i<obj.asian.length;i++){
@@ -220,7 +226,7 @@ function drawTbody(id,obj,index) {
             a1 = '<b>' + a1 + "</b>";
             pa1 = 0;
         }
-        line = String.format(htmlFormat,a[0],a1,a[2],'<b>' + a[3] + '</b>',i);
+        line = String.format(htmlFormat,a[0],a1,a[2],' onmouseover="showTooltip(event,'+index+','+i+',0)"><b>' + a[3] + '</b>',i);
         tbHtml = tbHtml + line;
     }
     selector.html(tbHtml);
@@ -282,7 +288,7 @@ oddslist.push(a);
                         <th>盘口</th>
                         <th>{{ r.away }}</th>
                     </tr>
-                    <tbody id='tbody_{{ r.company }}' onmouseout="hidetips(this);">
+                    <tbody id='tbody_{{ r.company }}'>
                     </tbody>
                 </table>
             </div>

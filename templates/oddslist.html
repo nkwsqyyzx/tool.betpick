@@ -118,12 +118,13 @@ function showTooltip(e,i,o){
     m = euros(cp,ct,st,et);
     for(var i = 0;i<m.m.length;i++){
         b = m.m[i];
+        b1 = (i < m.m.length - 1)?m.m[i+1]:false;
         h.push('<tr height="20px">');
-        h.push('<td bgcolor="#9EABCD">' + b[0] + '</td>');
-        h.push('<td bgcolor="#9EABCD">' + b[1] + '</td>');
-        h.push('<td bgcolor="#9EABCD">' + b[2] + '</td>');
-        h.push('<td bgcolor="#9EABCD">' + b[3] + '</td>');
-        h.push('<td bgcolor="#9EABCD">' + b[4] + '</td>');
+        h.push('<td align="center" bgcolor="#efefef">' + b[0] + '</td>');
+        h.push('<td align="center" bgcolor="#efefef">' + gTag(b,b1,1) +'</td>');
+        h.push('<td align="center" bgcolor="#efefef">' + gTag(b,b1,2) +'</td>');
+        h.push('<td align="center" bgcolor="#efefef">' + gTag(b,b1,3) +'</td>');
+        h.push('<td align="center" bgcolor="#efefef">' + b[4] + '</td>');
         h.push('</tr>');
     }
     h.push('</table>');
@@ -131,6 +132,22 @@ function showTooltip(e,i,o){
     tipsobj.css(css);
     if (window.event) { e.cancelBubble = true; }
     return false;
+}
+
+function gTag(b,b1,i){
+    if (b1){
+        if (parseFloat(b[i])<parseFloat(b1[i]))return green(b[i]);
+        if (parseFloat(b[i])>parseFloat(b1[i]))return red(b[i]);
+    }
+    return b[i];
+}
+
+function green(tag){
+    return '<font color="green">' + tag + '</font>';
+}
+
+function red(tag){
+    return '<font color="red">' + tag + '</font>';
 }
 
 function euros(obj,ct,st,et){

@@ -93,6 +93,13 @@ function showTooltip(e,i,o){
         coordinates.y = e.clientY + document.documentElement.scrollTop;
     }
     coordinates.x += 20;
+    css = {
+        "position": "absolute",
+        "width": "319px",
+        "z-index": "999",
+        "left": coordinates.x + "px",
+        "top": coordinates.y + "px"
+    };
     cp = oddslist[i];
 
     ct = cp.asian[o][0];
@@ -119,21 +126,9 @@ function showTooltip(e,i,o){
         h.push('<td bgcolor="#9EABCD">' + b[4] + '</td>');
         h.push('</tr>');
     }
-    if (m.m.length == 0 && m.ist >= 0 && m.iet >=0 ){
-        for (var i = m.ist;i<=m.iet;i++){
-            b = cp.euro[i];
-            h.push('<tr height="20px">');
-            h.push('<td bgcolor="#9EABCD">' + b[0] + '</td>');
-            h.push('<td bgcolor="#9EABCD">' + b[1] + '</td>');
-            h.push('<td bgcolor="#9EABCD">' + b[2] + '</td>');
-            h.push('<td bgcolor="#9EABCD">' + b[3] + '</td>');
-            h.push('<td bgcolor="#9EABCD">' + b[4] + '</td>');
-            h.push('</tr>');
-        }
-    }
     h.push('</table>');
     tipsobj.html(h.join(''));
-    tipsobj.css({ "position": "absolute", "width": "319px", "z-index": "999", "left": coordinates.x + "px", "top": coordinates.y + "px" });
+    tipsobj.css(css);
     if (window.event) { e.cancelBubble = true; }
     return false;
 }
@@ -141,27 +136,40 @@ function showTooltip(e,i,o){
 function euros(obj,ct,st,et){
     var m = [];
     ist = -1;
-    iet = -1;
+    var reverse = [];
     for(var i=0;i<obj.euro.length;i++){
-        a = obj.euro[i];
-        if (a[0]<=et && a[0]>=st){
-            m.push(a);
+        reverse.splice(0,0,obj.euro[i]);
+    }
+    for(var i=0;i<reverse.length;i++){
+        a = reverse[i];
+        if (a[0] < ct){
+            continue;
         }
-        if (ist < 0 && ct >= a[0]){
-            ist = i;
-        }
-        if (iet < 0 && ct < a[0]){
-            iet = i;
-        }
+        ist = i;
+        break;
     }
 
-    if (m.length == 0 && iet < 0){
-        // 欧赔是很久以前变化的.
-        iet = obj.euro.length - 1;
-        ist = (iet > 3) ?(iet -3):0;
+
+    max = 6;
+    jst = (ist >= 2)?(ist - 2):0;
+    count = (reverse.length - 1 - jst)>max?max:(reverse.length -1 - jst);
+    jet = jst + count;
+
+    if (count < max){
+        fjst = jst - max + count;
+        jst = (fjst >=0 )?fjst:0;
+        count = (reverse.length - jst -1 > max)?max:(reverse.length - jst -1);
+    }
+    if (ist < 0){
+        jst = (reverse.length > max)?(reverse.length - max):0;
+        count = (reverse.length > max)?max:reverse.length;
     }
 
-    return {"ist":ist,"iet":iet,"m":m};
+    for(i = jst;i<jst+count && i < reverse.length;i++){
+        m.splice(0,0,reverse[i]);
+    }
+
+    return {"ist":ist,"m":m};
 }
 
 function hidetips(obj) {
@@ -176,7 +184,7 @@ function hidetips(obj) {
 function drawTbody(id,obj,index) {
     selector = $("#tbody_" + id);
     tbHtml = '';
-    htmlFormat = '<tr height="20px"><td align="center">{0}</td><td align="center" onmouseout="hidetips(this);" onmouseover="showTooltip(event,'+index+',{4})">{1}</td><td align="center">{2}</td><td align="center">{3}</td></tr>';
+    htmlFormat = '<tr height="20px"><td align="center">{0}</td><td align="center" onmouseover="showTooltip(event,'+index+',{4})">{1}</td><td align="center">{2}</td><td align="center">{3}</td></tr>';
     pa1 = 0;
     a1 = '';
     for (var i = 0;i<obj.asian.length;i++){
@@ -257,7 +265,7 @@ oddslist.push(a);
                         <th>盘口</th>
                         <th>{{ r.away }}</th>
                     </tr>
-                    <tbody id='tbody_{{ r.company }}'>
+                    <tbody id='tbody_{{ r.company }}' onmouseout="hidetips(this);">
                     </tbody>
                 </table>
             </div>

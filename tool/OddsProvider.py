@@ -20,16 +20,7 @@ class OddsProvider():
         self.url = 'http://www.zso8.com/a/y{0}cn.html'.format(mid)
 
     def __getAsianOddsHtml(self):
-        fpath = './data/y{0}cn.html'.format(self.mid)
-        if os.path.exists(fpath):
-            with codecs.open(fpath,'r','utf-8') as f:
-                return f.read()
-        html = urllib.request.urlopen(self.url).read().decode('UTF-8')
-        if not os.path.exists('./data/'):
-            os.makedirs('./data/')
-        with codecs.open(fpath, 'a+', 'utf-8') as outfile:
-            outfile.write(html)
-        return html
+        return self.__getHtml(self.url)
 
     def __parseHtmlToCompanyPairs(self,html):
         soup = BeautifulSoup(html)
@@ -73,7 +64,7 @@ class OddsProvider():
                 html = urllib.request.urlopen(u).read().decode('UTF-8')
                 if not os.path.exists('./data/'):
                     os.makedirs('./data/')
-                with codecs.open(fpath, 'a+', 'utf-8') as outfile:
+                with codecs.open(fpath, 'w', 'utf-8') as outfile:
                     outfile.write(html)
                 return html
         else:

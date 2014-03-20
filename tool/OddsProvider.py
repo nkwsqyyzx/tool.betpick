@@ -17,7 +17,7 @@ delay = 1
 class OddsProvider():
     def __init__(self,mid):
         self.mid = mid
-        self.url = 'http://www.zso8.com/a/y{0}cn.html'.format(mid)
+        self.url = 'http://api.zso8.com/a/y{0}cn.html'.format(mid)
 
     def __getAsianOddsHtml(self):
         return self.__getHtml(self.url)
@@ -84,7 +84,7 @@ class OddsProvider():
             rs.append((t, s1, p, s2))
 
     def __getAsianOdds(self, p, ec, mid, cid, t1, t2, m):
-        uri = 'http://www.zso8.com/app/midDetailA.asp?a=1&id={0}&cid={1}&t1={2}&t2={3}&Company={4}'.format(mid, cid, t1, t2, ec)
+        uri = 'http://app.zso8.com/midDetailA.aspx?a=1&id={0}&cid={1}&t1={2}&t2={3}&Company={4}'.format(mid, cid, t1, t2, ec)
         if release:
             source = self.__getHtml(uri)
         else:
@@ -96,7 +96,7 @@ class OddsProvider():
 
 
     def __getOverOdds(self, p, ec, mid, cid, t1, t2, m):
-        uri = 'http://www.zso8.com/app/midDetailU.asp?id={0}&cid={1}&t1={2}&t2={3}&Company={4}'.format(mid, cid, t1, t2, ec)
+        uri = 'http://app.zso8.com/midDetailU.aspx?id={0}&cid={1}&t1={2}&t2={3}&Company={4}'.format(mid, cid, t1, t2, ec)
         if release:
             source = self.__getHtml(uri)
         else:
@@ -108,7 +108,7 @@ class OddsProvider():
 
 
     def __getEuroOdds(self, ec, mid, cid, t1, t2, m):
-        uri = 'http://www.zso8.com/app/midDetailE.asp?id={0}&cid={1}&t1={2}&t2={3}&Company={4}'.format(mid, cid, t1, t2, ec)
+        uri = 'http://app.zso8.com/midDetailE.aspx?id={0}&cid={1}&t1={2}&t2={3}&Company={4}'.format(mid, cid, t1, t2, ec)
         if release:
             source = self.__getHtml(uri)
         else:

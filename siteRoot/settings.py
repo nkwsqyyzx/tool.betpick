@@ -47,9 +47,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'betpick.urls'
+ROOT_URLCONF = 'siteRoot.urls'
 
-WSGI_APPLICATION = 'betpick.wsgi.application'
+WSGI_APPLICATION = 'siteRoot.wsgi.application'
 
 
 # Database

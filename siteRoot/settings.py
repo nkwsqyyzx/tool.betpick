@@ -64,6 +64,7 @@ DATABASES = {
 }
 
 TEMPLATE_DIRS = (
+    os.path.join(BASE_DIR,''),
     os.path.join(BASE_DIR,'templates/'),
 )
 

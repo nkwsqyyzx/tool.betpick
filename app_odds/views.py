@@ -13,11 +13,11 @@ def odds(request,mid):
         oddslist.append(r)
 
     c = Context({'oddslist': oddslist})
-    t = get_template('oddslist.html')
+    t = get_template('app_odds/templates/app_odds/oddslist.html')
     html = t.render(c)
     return HttpResponse(html)
 
 def home(request):
-    t = get_template('home.html')
+    t = get_template('app_odds/templates/app_odds/home.html')
     html = t.render(Context())
     return HttpResponse(html)

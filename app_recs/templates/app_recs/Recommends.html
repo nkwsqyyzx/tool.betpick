@@ -1,0 +1,56 @@
+{% load staticfiles %}
+<html>
+<head><title>推荐汇总</title></head>
+
+<style type="text/css">
+.wrap {
+    float:left;
+    width:100%;
+    margin:0 auto;
+}
+.left_col {
+    float:left;
+    width:30%;
+}
+.right_col {
+    float:right;
+    width:70%;
+}
+</style>
+
+<body>
+
+<table cellspacing="0" cellpadding="0" border='1px'>
+    <tr>
+        <th>联赛</th>
+        <th>开赛时间</th>
+        <th>主队</th>
+        <th>盘口</th>
+        <th>客队</th>
+        <th>推荐</th>
+        <th>水位</th>
+        <th>比分</th>
+        <th>结果</th>
+        <th>推荐时间</th>
+        <th>推荐人</th>
+    </tr>
+    <tbody id='tbody'>
+    {% for r in Recommends %}
+    <tr>
+        <td>{{ r.League }}</td>
+        <td>{{ r.Time1|date:'y-m-d H:i' }}</td>
+        <td>{{ r.Host }}</td>
+        <td>{{ r.OddStake }}</td>
+        <td>{{ r.Guest }}</td>
+        <td>{{ r.Prefer }}</td>
+        <td>{{ r.Odds }}</td>
+        <td>{{ r.Result }}</td>
+        <td>{{ r.PreferResult }}</td>
+        <td>{{ r.Time2|date:'y-m-d H:i' }}</td>
+        <td align='center'>{{ r.Person }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</body>
+</html>

@@ -65,7 +65,7 @@ function drawFlash(id,obj,i) {
     id = String.format("swf_{0}",id);
     try {
         var so = new SWFObject("{% static 'amline/amline.swf' %}", "amline", "940", "400", "8", "#FFFFFF");
-        so.addVariable("path", "{% static '/amline/' %}");
+        so.addVariable("path", "{% static '/static/amline/' %}");
         so.addVariable("chart_data", encodeURIComponent(formatData(obj)));
         so.addVariable("chart_settings", encodeURIComponent(formatSetting(obj)));
         so.write(id);

@@ -1,12 +1,13 @@
 # -*- coding: UTF8 -*-
-import urllib.request
-import os.path
-import re
 from bs4 import BeautifulSoup
 import codecs
-import time
-from tool.MatchOdds import MatchOdds
+import os.path
 import random
+import re
+import time
+import urllib.request
+
+from app_odds.tool.MatchOdds import MatchOdds
 
 escape = urllib.parse.quote
 

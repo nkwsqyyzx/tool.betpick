@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.template import Template, Context
 from django.template.loader import get_template
 
-from tool.OddsProvider import OddsProvider
+from app_odds.tool.OddsProvider import OddsProvider
 
 # Create your views here.
 def odds(request,mid):

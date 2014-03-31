@@ -4,6 +4,29 @@
 <head><title>推荐汇总</title></head>
 
 <style type="text/css">
+.cs0
+{
+}
+.cs1
+{
+    color:black;
+}
+.cs2
+{
+    color:#232323;
+}
+.cs3
+{
+    color:#ababab;
+}
+.cs4
+{
+    color:#ab1212;
+}
+.cs5
+{
+    color:#ff0000;
+}
 </style>
 
 <body>
@@ -24,7 +47,7 @@
     </tr>
     <tbody id='tbody'>
     {% for r in Recommends %}
-    <tr>
+    <tr class='cs{{ r.PreferResult }}'>
         <td>{{ r.League }}</td>
         <td>{{ r.Time1|date:'y-m-d H:i' }}</td>
         <td>{{ r.Host }}</td>

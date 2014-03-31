@@ -143,7 +143,7 @@ class OddsProvider():
         m.away = p[4]
 
         self.__getAsianOdds(p, ec, mid, cid, t1, t2, m)
-        self.__getOverOdds(p, ec, mid, cid, t1, t2, m)
+        # self.__getOverOdds(p, ec, mid, cid, t1, t2, m)
         self.__getEuroOdds(ec, mid, cid, t1, t2, m)
 
         m.company = company

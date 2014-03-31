@@ -3,19 +3,6 @@
 <head><title>推荐汇总</title></head>
 
 <style type="text/css">
-.wrap {
-    float:left;
-    width:100%;
-    margin:0 auto;
-}
-.left_col {
-    float:left;
-    width:30%;
-}
-.right_col {
-    float:right;
-    width:70%;
-}
 </style>
 
 <body>
@@ -47,7 +34,7 @@
         <td>{{ r.Result }}</td>
         <td>{{ r.PreferResult }}</td>
         <td>{{ r.Time2|date:'y-m-d H:i' }}</td>
-        <td align='center'>{{ r.Person }}</td>
+        <td align='center'><a target="_blank" href='/recs/p/{{ r.Person }}'>{{ r.Person }}</a></td>
     </tr>
     {% endfor %}
     </tbody>

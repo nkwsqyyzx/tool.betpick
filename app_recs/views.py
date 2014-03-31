@@ -14,3 +14,7 @@ def home(request):
 def latest(request):
     Recommends = Recommend.objects.order_by('-Time2')[:100]
     return render_to_response('app_recs/templates/app_recs/Recommends.html',locals())
+
+def person(request,name):
+    Recommends = Recommend.objects.filter(Person=name).order_by('-Time2')[:100]
+    return render_to_response('app_recs/templates/app_recs/Recommends.html',locals())

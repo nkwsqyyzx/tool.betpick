@@ -75,10 +75,12 @@ class OddsProvider():
 
     def __parseTwoColumn(self, p, source, rs):
         soup = BeautifulSoup(source)
-        trs = soup.findAll('tr')[3:]
+        trs = soup.findAll('tr')[2:]
         for tr in trs:
             tds = tr.findAll('td')
             t = tds[0].get_text().strip()
+            if '市场倾向' in t:
+                continue
             s1 = tds[1].get_text().strip()
             p = tds[2].get_text().strip()
             s2 = tds[3].get_text().strip()

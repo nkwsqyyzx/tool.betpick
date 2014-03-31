@@ -1,3 +1,4 @@
+{% load ResultDescription %}
 {% load staticfiles %}
 <html>
 <head><title>推荐汇总</title></head>
@@ -32,7 +33,7 @@
         <td>{{ r.Prefer }}</td>
         <td>{{ r.Odds }}</td>
         <td>{{ r.Result }}</td>
-        <td>{{ r.PreferResult }}</td>
+        <td>{{ r.PreferResult|ResultDescription }}</td>
         <td>{{ r.Time2|date:'y-m-d H:i' }}</td>
         <td align='center'><a target="_blank" href='/recs/p/{{ r.Person }}'>{{ r.Person }}</a></td>
     </tr>

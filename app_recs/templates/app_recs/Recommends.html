@@ -28,6 +28,25 @@
     color:#ff0000;
 }
 </style>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>
+function del(rid) {
+    if (!confirm('你确定要删除这条数据吗?')) {
+        return;
+    }
+    var url = '/recs/d/' + rid;
+    $.ajax({
+        url: url,
+        context: document.body
+    }).done(function (data) {
+        if (data == 'OK') {
+            location.reload();
+        } else {
+            alert('数据删除失败,检查服务器端日志');
+        }
+    });
+}
+</script>
 
 <body>
 
@@ -55,7 +74,7 @@
         <td>{{ r.Guest }}</td>
         <td>{{ r.Prefer }}</td>
         <td>{{ r.Odds }}</td>
-        <td>{{ r.Result }}</td>
+        <td><span onclick="del({{ r.id }})">{{ r.Result }}</span></td>
         <td>{{ r.PreferResult|ResultDescription }}</td>
         <td>{{ r.Time2|date:'y-m-d H:i' }}</td>
         <td align='center'><a target="_blank" href='/recs/p/{{ r.Person }}'>{{ r.Person }}</a></td>

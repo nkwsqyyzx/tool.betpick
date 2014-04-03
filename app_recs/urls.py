@@ -8,4 +8,5 @@ urlpatterns = patterns('',
     url(r'^best/$','app_recs.views.best', name='best'),
     url(r'^latest/$','app_recs.views.latest', name='latest'),
     url(r'^p/(.+)$','app_recs.views.person', name='person'),
+    url(r'^d/(.+)$','app_recs.views.delete', name='delete'),
 )

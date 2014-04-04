@@ -77,10 +77,15 @@ class OddsProvider():
         trs = soup.find('table').findAll('tr')[2:-3]
         for tr in trs:
             tds = tr.findAll('td')
+            # 变化时间
             time = tds[0].get_text().strip()
+            # 主队赔率
             home = tds[1].get_text().strip()
+            # 平局赔率
             draw = tds[2].get_text().strip()
+            # 客队赔率
             away = tds[3].get_text().strip()
+            # 返还率
             roi = tds[7].get_text().strip()
             i = time, home, draw, away, roi
             m.euro.append(i)

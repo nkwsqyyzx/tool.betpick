@@ -33,18 +33,18 @@ class OddsProvider():
         return rs
 
     def getResult(self,companyFilter = []):
-        h = self.__getAsianOddsHtml()
-        pairs = self.__parseHtmlToCompanyPairs(h)
+        asianSource = self.__getAsianOddsHtml()
+        pairs = self.__parseHtmlToCompanyPairs(asianSource)
 
         if companyFilter:
-            a = [r for r in pairs if r[0] in companyFilter]
-            for p in a:
-                yield self.__getCompanyData(p)
+            selectedPairs = [pair for pair in pairs if pair[0] in companyFilter]
+            for pair in selectedPairs:
+                yield self.__getCompanyData(pair)
         else:
-            for p in pairs:
-                yield self.__getCompanyData(p)
+            for pair in pairs:
+                yield self.__getCompanyData(pair)
 
-    def __parseTwoColumn(self, p, source, rs):
+    def __parseTwoColumn(self, source, rs):
         soup = BeautifulSoup(source)
         trs = soup.findAll('tr')[2:]
         for tr in trs:
@@ -57,18 +57,16 @@ class OddsProvider():
             s2 = tds[3].get_text().strip()
             rs.append((t, s1, p, s2))
 
-    def __getAsianOdds(self, p, ec, mid, cid, t1, t2, m):
+    def __getAsianOdds(self, ec, mid, cid, t1, t2, m):
         uri = 'http://app.zso8.com/midDetailA.aspx?a=1&id={0}&cid={1}&t1={2}&t2={3}&Company={4}'.format(mid, cid, t1, t2, ec)
         source = cache.getContent(uri)
         rs = m.asian
-        self.__parseTwoColumn(p, source, rs)
+        self.__parseTwoColumn(source, rs)
 
-
-    def __getOverOdds(self, p, ec, mid, cid, t1, t2, m):
+    def __getOverOdds(self, ec, mid, cid, t1, t2, m):
         uri = 'http://app.zso8.com/midDetailU.aspx?id={0}&cid={1}&t1={2}&t2={3}&Company={4}'.format(mid, cid, t1, t2, ec)
         source = cache.getContent(uri)
-        self.__parseTwoColumn(p, source, m.over)
-
+        self.__parseTwoColumn(source, m.over)
 
     def __getEuroOdds(self, ec, mid, cid, t1, t2, m):
         uri = 'http://app.zso8.com/midDetailE.aspx?id={0}&cid={1}&t1={2}&t2={3}&Company={4}'.format(mid, cid, t1, t2, ec)
@@ -90,20 +88,20 @@ class OddsProvider():
             i = time, home, draw, away, roi
             m.euro.append(i)
 
-    def __getCompanyData(self,p):
-        company = p[0]
+    def __getCompanyData(self,pair):
+        company = pair[0]
         ec = escape(company)
-        mid = p[1]
-        cid = p[2]
-        t1 = escape(p[3])
-        t2 = escape(p[4])
+        mid = pair[1]
+        cid = pair[2]
+        t1 = escape(pair[3])
+        t2 = escape(pair[4])
 
         m = MatchOdds()
-        m.home = p[3]
-        m.away = p[4]
+        m.home = pair[3]
+        m.away = pair[4]
 
-        self.__getAsianOdds(p, ec, mid, cid, t1, t2, m)
-        # self.__getOverOdds(p, ec, mid, cid, t1, t2, m)
+        self.__getAsianOdds(ec, mid, cid, t1, t2, m)
+        # self.__getOverOdds(ec, mid, cid, t1, t2, m)
         self.__getEuroOdds(ec, mid, cid, t1, t2, m)
 
         m.company = company

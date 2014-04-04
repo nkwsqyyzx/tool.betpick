@@ -5,15 +5,15 @@ import os.path
 import time
 import urllib.request
 
-m = hashlib.md5()
 class HtmlCache:
     def getContent(self,url,encoding = 'utf-8',cache = 1,timeout = 30*60):
         if cache:
+            m = hashlib.md5()
             m.update(url.encode())
-            md5value=m.hexdigest()
+            md5value = m.hexdigest()
 
             fpath = './data/{0}.html'.format(md5value)
-            if os.path.exists(fpath) and (timeout and (time.time() - os.path.getmtime(fpath) < timeout) or True):
+            if os.path.exists(fpath) and ((time.time() - os.path.getmtime(fpath) < timeout) and timeout or True):
                 with codecs.open(fpath,'r',encoding) as f:
                     return f.read()
             else:

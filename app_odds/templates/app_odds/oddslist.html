@@ -95,7 +95,6 @@ function showTooltip(e,i,o,k){
     coordinates.x += 20;
     css = {
         "position": "absolute",
-        "width": "319px",
         "z-index": "999",
         "left": coordinates.x + "px",
         "top": coordinates.y + "px"
@@ -109,11 +108,11 @@ function showTooltip(e,i,o,k){
     var h = [];
     h.push('<table width="100%" cellspacing="0" cellpadding="0" bgcolor="#CEABCD" border="1px">');
     h.push('<tr height="20px">');
-    h.push('<th bgcolor="#CEFFCD" align="center" width="85px">时间</th>');
-    h.push('<th bgcolor="#CEFFCD" align="center" width="10px">主</th>');
-    h.push('<th bgcolor="#CEFFCD" align="center" width="10px">和</th>');
-    h.push('<th bgcolor="#CEFFCD" align="center" width="10px">负</th>');
-    h.push('<th bgcolor="#CEFFCD" align="center" width="10px">返还</th>');
+    h.push('<th bgcolor="#CEFFCD" align="center">时间</th>');
+    h.push('<th bgcolor="#CEFFCD" align="center">主</th>');
+    h.push('<th bgcolor="#CEFFCD" align="center">和</th>');
+    h.push('<th bgcolor="#CEFFCD" align="center">负</th>');
+    h.push('<th bgcolor="#CEFFCD" align="center">返还</th>');
     h.push('</tr>');
     var m = {};
     if (k){

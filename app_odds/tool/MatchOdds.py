@@ -6,6 +6,11 @@ class MatchOdds:
         self.home = ''
         # 客队
         self.away = ''
+        # 各大公司赔率列表
+        self.odds = []
+
+class Odds:
+    def __init__(self):
         # 公司名
         self.company = ''
         # 亚盘水位

@@ -107,6 +107,14 @@ class OddsProvider():
         m.company = company
         return m
 
+class EuroOddsPairParser:
+    def __init__(self,source):
+        self.source = source
+
+    def getResult(self):
+        pairs = []
+        return pairs
+
 if __name__ == "__main__":
     o = OddsProvider('681785')
     companyFilter = ['']

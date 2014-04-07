@@ -1,6 +1,6 @@
 {% load staticfiles %}
 <html>
-<head><title>{{ oddslist.1.home }} VS {{ oddslist.1.away }} 各家赔率走势</title></head>
+<head><title>{{ home }} VS {{ guest }} 各家赔率走势</title></head>
 
 <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
 <script type="text/javascript" src='{% static "amline/swfobject.js" %}'></script>
@@ -263,8 +263,8 @@ function draw(id, obj,i) {
 {% if r.asian %}
 <script>
 var a = {};
-a.home = '{{ r.home }}';
-a.away = '{{ r.away }}';
+a.home = '{{ home }}';
+a.away = '{{ guest }}';
 a.company = '{{ r.company }}';
 a.asian = [];
 {% for item in r.asian %} a.asian.push(['{{ item.0 }}','{{ item.1 }}','{{ item.2 }}','{{ item.3 }}']); {% endfor %}
@@ -273,7 +273,7 @@ a.euro = [];
 oddslist.push(a);
 </script>
 <ul>
-    <li>{{ r.home }} vs {{ r.away }} <a href='javascript:toggle("{{ r.company }}")'>{{ r.company }}</a>  走势</li>
+    <li>{{ home }} vs {{ guest }} <a href='javascript:toggle("{{ r.company }}")'>{{ r.company }}</a>  走势</li>
 </ul>
 <div id='{{ r.company }}' style="display: block" class='wrap'>
     <div id='tb_{{ r.company }}' class='left_col'>
@@ -283,9 +283,9 @@ oddslist.push(a);
                 <table cellspacing="0" cellpadding="0" border='1px'>
                     <tr>
                         <th>时间</th>
-                        <th>{{ r.home }}</th>
+                        <th>{{ home }}</th>
                         <th>盘口</th>
-                        <th>{{ r.away }}</th>
+                        <th>{{ guest }}</th>
                     </tr>
                     <tbody id='tbody_{{ r.company }}'>
                     </tbody>

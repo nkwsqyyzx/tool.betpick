@@ -11,6 +11,7 @@ urlpatterns = patterns('',
     # 捷豹比分网
     url(r'^nowscore/$','app_odds.views.nowscore_home',name='nowscore_home'),
     url(r'^nowscore/(\d+)/$','app_odds.views.nowscore_odds', name='nowscore_odds'),
+    url(r'^nowscore/history/$','app_odds.views.nowscore_history', name='nowscore_history'),
     # amcharts license
     url(r'^amline/amcharts_key.txt$', RedirectView.as_view(url='/static/amline/amcharts_key.txt')),
 )

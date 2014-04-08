@@ -40,3 +40,21 @@ def nowscore_home(request):
     t = get_template('app_odds/templates/app_odds/nowscore_home.html')
     html = t.render(Context({'current_time':int(time.time())*1000}))
     return HttpResponse(html)
+
+
+from datetime import datetime, timedelta
+from django.http import HttpResponseRedirect
+def nowscore_history(request):
+    t = get_template('app_odds/templates/app_odds/nowscore_history.html')
+    passed = request.GET.get('passed')
+    try:
+        # 看看passed数字是不是int
+        passed = int(passed)
+        if passed > 365 or passed < 1:
+            passed = 1
+    except (ValueError,TypeError):
+        passed = 1
+        return HttpResponseRedirect('/odds/nowscore/history/?passed='+str(passed))
+    date = (datetime.now() - timedelta(days=passed)).strftime('%Y/%m/%d')
+    html = t.render(Context({'specified_date':date}))
+    return HttpResponse(html)

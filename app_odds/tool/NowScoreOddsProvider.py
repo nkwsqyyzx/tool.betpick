@@ -34,9 +34,12 @@ class NowScoreOddsProvider():
         return cache.getContent(url,timeout=self.timeout)
 
     def getResult(self,companyFilter = []):
-        caredCompanies = None
+        caredCompanies = []
         if companyFilter:
-            caredCompanies = [a for a in allCompanies if a[1] in companyFilter]
+            for company in companyFilter:
+                for item in allCompanies:
+                    if item[1] == company:
+                        caredCompanies.append(item)
         else:
             caredCompanies = [a for a in allCompanies[0:10]]
         matchOdds = MatchOdds()

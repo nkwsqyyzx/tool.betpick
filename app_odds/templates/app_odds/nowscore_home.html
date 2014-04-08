@@ -27,7 +27,6 @@ function ShowBf() {
         return str;
     }
     $(document).ready(function () {
-        var matches = [];
         var tr = '';
         for (var i = 0; i < A.length; i++) {
             var m = A[i];
@@ -44,9 +43,9 @@ function ShowBf() {
             b.push(String.format('{0} [{1}]',m[4],m[21]));
             // 客队 [排名]
             b.push(String.format('{0} [{1}]',m[7],m[22]));
-            matches.push(b);
             link = String.format("<a href='/odds/nowscore/{0}/?home={1}&guest={2}' target='_blank'>查看</a>", m[0],m[4],m[7]);
-            at = String.format("<td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td align='center'>{4}</td>", b[0], b[1], b[2], b[3], link);
+            linkEuro = String.format("<a href='/odds/nowscore/{0}/euro/?home={1}&guest={2}' target='_blank'>欧赔</a>", m[0],m[4],m[7]);
+            at = String.format("<td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td align='center'>{4}</td><td align='center'>{5}</td>", b[0], b[1], b[2], b[3], link,linkEuro);
             tr = String.format("{0}<tr>{1}</tr>", tr, at);
         }
         var table = String.format("{0}", tr);
@@ -64,6 +63,7 @@ function ShowBf() {
             <th align='center'>主队</th>
             <th align='center'>客队</th>
             <th align='center'>查看</th>
+            <th align='center'>欧赔</th>
         </tr>
         <tbody id='tb_body'></tbody>
     </table>

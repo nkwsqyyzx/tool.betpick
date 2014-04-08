@@ -41,6 +41,18 @@ def nowscore_home(request):
     html = t.render(Context({'current_time':int(time.time())*1000}))
     return HttpResponse(html)
 
+def nowscore_euro(request,mid):
+    home = request.GET.get('home')
+    guest = request.GET.get('guest')
+    oddslist = []
+    rs = NowScoreOddsProvider(mid).getResult(companyFilter = ['威廉希尔','立博','Bet365','SNAI','Inter wetten',])
+    for r in rs.odds:
+        oddslist.append(r)
+
+    c = Context({'oddslist': oddslist,'home':home,'guest':guest})
+    t = get_template('app_odds/templates/app_odds/euro.html')
+    html = t.render(c)
+    return HttpResponse(html)
 
 from datetime import datetime, timedelta
 from django.http import HttpResponseRedirect

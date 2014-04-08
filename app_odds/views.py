@@ -22,7 +22,7 @@ def home(request):
     return HttpResponse(html)
 
 from app_odds.tool.NowScoreOddsProvider import NowScoreOddsProvider
-def nowscore(request,mid):
+def nowscore_odds(request,mid):
     home = request.GET.get('home')
     guest = request.GET.get('guest')
     oddslist = []

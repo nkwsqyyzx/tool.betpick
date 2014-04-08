@@ -25,12 +25,13 @@ allCompanies = [
 ]
 
 class NowScoreOddsProvider():
-    def __init__(self,mid):
+    def __init__(self,mid,cacheForever = False):
         self.mid = mid
+        self.timeout = 100000 if cacheForever else 1800;
 
     def __getOddsByCompanyId(self,cid):
         url = 'http://live1.nowscore.com/odds/3in1Odds.aspx?companyid={1}&id={0}'.format(self.mid,cid)
-        return cache.getContent(url)
+        return cache.getContent(url,timeout=self.timeout)
 
     def getResult(self,companyFilter = []):
         caredCompanies = None

@@ -17,7 +17,7 @@ class HtmlCache:
                 with codecs.open(fpath,'r',encoding) as f:
                     return f.read()
             else:
-                html = urllib.request.urlopen(url).read().decode(encoding)
+                html = urllib.request.urlopen(url).read().decode(encoding,errors = 'ignore')
                 if not os.path.exists('./data/'):
                     os.makedirs('./data/')
                 with codecs.open(fpath, 'w', encoding) as outfile:

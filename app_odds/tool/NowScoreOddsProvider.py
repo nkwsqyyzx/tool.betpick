@@ -42,12 +42,14 @@ class NowScoreOddsProvider():
         for c in caredCompanies:
             html = self.__getOddsByCompanyId(c[0])
             soup = BeautifulSoup(html)
-            tables = soup.findAll('table',{"class":'gts'})
+            tables = soup.findAll('table',{"class":'gts',"bgcolor":"#DDDDDD"})
             o = Odds()
             o.company = c[1]
             # 亚盘
             for tr in tables[0].findAll('tr')[1:]:
                 tds = tr.findAll('td')
+                if len(tds) < 7 or tds[6].get_text().strip() == '滚':
+                    continue
                 t = tds[5].get_text().strip()
                 t = '{0} {1}'.format(t[0:5],t[5:])
                 s1 = tds[2].get_text().strip()
@@ -58,6 +60,8 @@ class NowScoreOddsProvider():
             # 大小盘
             for tr in tables[1].findAll('tr')[1:]:
                 tds = tr.findAll('td')
+                if len(tds) < 7 or tds[6].get_text().strip() == '滚':
+                    continue
                 t = tds[5].get_text().strip()
                 t = '{0} {1}'.format(t[0:5],t[5:])
                 s1 = tds[2].get_text().strip()
@@ -68,6 +72,8 @@ class NowScoreOddsProvider():
             # 欧赔
             for tr in tables[2].findAll('tr')[1:]:
                 tds = tr.findAll('td')
+                if len(tds) < 7 or tds[6].get_text().strip() == '滚':
+                    continue
                 t = tds[5].get_text().strip()
                 # 变化时间
                 t = '{0} {1}'.format(t[0:5],t[5:])
@@ -84,7 +90,7 @@ class NowScoreOddsProvider():
         return matchOdds;
 
 if __name__ == "__main__":
-    o = NowScoreOddsProvider('893124')
+    o = NowScoreOddsProvider('853476')
     rs = o.getResult()
 
     for r in rs.odds:

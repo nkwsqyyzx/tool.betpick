@@ -48,7 +48,8 @@ function ShowBf() {
             b.push(String.format('{0}:{1}',m[13],m[14]));
             matches.push(b);
             link = String.format("<a href='/odds/nowscore/{0}/?home={1}&guest={2}' target='_blank'>查看</a>", m[0],m[4],m[7]);
-            at = String.format("<td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td><td>{5}</td>", b[0], b[1], b[2], b[3],b[4], link);
+            linkEuro = String.format("<a href='/odds/nowscore/{0}/euro/?home={1}&guest={2}' target='_blank'>欧赔</a>", m[0],m[4],m[7]);
+            at = String.format("<td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td align='center'>{4}</td><td align='center'>{5}</td><td align='center'>{6}</td>", b[0], b[1], b[2], b[3],b[4], link,linkEuro);
             tr = String.format("{0}<tr>{1}</tr>", tr, at);
         }
         var table = String.format("{0}", tr);
@@ -66,7 +67,8 @@ function ShowBf() {
             <th align='center'>主队</th>
             <th align='center'>客队</th>
             <th align='center'>比分</th>
-            <th align='center'>查看</th>
+            <th align='center'>指数</th>
+            <th align='center'>欧赔</th>
         </tr>
         <tbody id='tb_body'></tbody>
     </table>

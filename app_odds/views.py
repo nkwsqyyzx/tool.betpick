@@ -57,7 +57,6 @@ def nowscore_euro(request,mid):
 from datetime import datetime, timedelta
 from django.http import HttpResponseRedirect
 def nowscore_history(request):
-    t = get_template('app_odds/templates/app_odds/nowscore_history.html')
     passed = request.GET.get('passed')
     try:
         # 看看passed数字是不是int
@@ -68,6 +67,7 @@ def nowscore_history(request):
         passed = 1
         return HttpResponseRedirect('/odds/nowscore/history/?passed='+str(passed))
     date = (datetime.now() - timedelta(days=passed)).strftime('%Y/%m/%d')
+    t = get_template('app_odds/templates/app_odds/nowscore_history.html')
     html = t.render(Context({'specified_date':date}))
     return HttpResponse(html)
 

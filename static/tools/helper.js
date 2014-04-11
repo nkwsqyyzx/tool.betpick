@@ -27,3 +27,76 @@ function timeByOffset(origin,offset){
     s = date.getSeconds();
     return zp(m) + '-' + zp(d) + ' ' + zp(h) + ':' + zp(min) + ':' + zp(s);
 }
+
+String.prototype.Trim = function(){
+    return this.replace(/(^\s*)|(\s*$)/g, "");
+}
+String.format = function () {
+    if (arguments.length == 0) {
+        return null;
+    }
+    var str = arguments[0];
+    for (var i = 1; i < arguments.length; i++) {
+        var re = new RegExp('\\{' + (i - 1) + '\\}', 'gm');
+        str = str.replace(re, arguments[i]);
+    }
+    return str;
+}
+
+matchColors = [
+    ["#F0F0F0","#0000CC","英足总杯"],
+    ["#F0F0F0","#006633","西甲"],
+    ["#F0F0F0","#006699","俄超"],
+    ["#F0F0F0","#008888","葡超"],
+    ["#F0F0F0","#0088FF","意甲"],
+    ["#F0F0F0","#009900","日职联"],
+    ["#F0F0F0","#00A8A8","友谊赛"],
+    ["#F0F0F0","#00CCCC","阿甲秋"],
+    ["#F0F0F0","#00D200","瑞士甲"],
+    ["#F0F0F0","#1BA578","瑞士超"],
+    ["#F0F0F0","#438E0B","西乙"],
+    ["#F0F0F0","#663333","法甲"],
+    ["#F0F0F0","#66CCFF","意乙"],
+    ["#F0F0F0","#990099","德甲"],
+    ["#F0F0F0","#993333","哥伦甲秋"],
+    ["#F0F0F0","#996600","土超"],
+    ["#F0F0F0","#B1A7A7","法乙"],
+    ["#F0F0F0","#CA00CA","德乙"],
+    ["#F0F0F0","#FF3333","英超"],
+    ["#F0F0F0","#FF7000","澳洲甲"],
+    ["#F0F0F0","#FF850B","英甲"],
+    ["#F0F0F0","#CC3300","英冠"],
+    ["#FFFDF3","#006633","西甲"],
+    ["#FFFDF3","#006699","俄超"],
+    ["#FFFDF3","#0066FF","中超"],
+    ["#FFFDF3","#008888","葡超"],
+    ["#FFFDF3","#0088FF","意甲"],
+    ["#FFFDF3","#009900","日职联"],
+    ["#FFFDF3","#00A8A8","友谊赛"],
+    ["#FFFDF3","#00CCCC","阿甲秋"],
+    ["#FFFDF3","#00D200","瑞士甲"],
+    ["#FFFDF3","#1BA578","瑞士超"],
+    ["#FFFDF3","#438E0B","西乙"],
+    ["#FFFDF3","#663333","法甲"],
+    ["#FFFDF3","#66CCFF","意乙"],
+    ["#FFFDF3","#990099","德甲"],
+    ["#FFFDF3","#993333","哥伦甲秋"],
+    ["#FFFDF3","#996600","土超"],
+    ["#FFFDF3","#CA00CA","德乙"],
+    ["#FFFDF3","#FF3333","英超"],
+    ["#FFFDF3","#FF6699","荷甲"],
+    ["#FFFDF3","#FF7000","澳洲甲"],
+    ["#FFFDF3","#FF850B","英甲"],
+    ["#FFFDF3","#CC3300","英冠"]
+];
+
+careMatches = [];
+careColors = [];
+
+for (var i = 0;i < matchColors.length;i++){
+    careMatches.push(matchColors[i][2]);
+    m = [];
+    m.push(matchColors[i][0]);
+    m.push(matchColors[i][1]);
+    careColors.push(m);
+}

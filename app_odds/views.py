@@ -70,3 +70,18 @@ def nowscore_history(request):
     date = (datetime.now() - timedelta(days=passed)).strftime('%Y/%m/%d')
     html = t.render(Context({'specified_date':date}))
     return HttpResponse(html)
+
+def nowscore_next(request):
+    page_number = request.GET.get('page_number')
+    try:
+        # 看看page_number数字是不是int
+        page_number = int(page_number)
+        if page_number > 7 or page_number < 1:
+            page_number = 1
+    except (ValueError,TypeError):
+        page_number = 1
+        return HttpResponseRedirect('/odds/nowscore/next/?page_number='+str(page_number))
+
+    t = get_template('app_odds/templates/app_odds/nowscore_next.html')
+    html = t.render(Context({'current_time':int(time.time())*1000,'page_number':page_number}))
+    return HttpResponse(html)

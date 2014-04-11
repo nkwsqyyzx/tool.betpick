@@ -1,0 +1,77 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+
+<head>
+    <title>
+
+    </title>
+</head>
+
+<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+<script type="text/javascript">
+function ShowBf() {
+    careMatches = ["爱超","奥甲","澳洲甲","比甲","波兰超","丹麦超","德甲","德乙","俄超","俄甲","法甲","法乙","韩K联","韩联盟","韩挑赛","荷甲","荷乙","捷甲","罗甲","美职业","欧冠杯","欧罗巴杯","葡超","日职联","日职乙","瑞典超","瑞士超","苏超","泰超","土超","威超","西甲","西乙","希腊超","希腊甲","亚冠杯","意甲","意乙","英超","英冠","英甲","智利甲秋","中超","自由杯"];
+    String.prototype.Trim = function(){
+        return this.replace(/(^\s*)|(\s*$)/g, "");
+    }
+    String.format = function () {
+        if (arguments.length == 0) {
+            return null;
+        }
+        var str = arguments[0];
+        for (var i = 1; i < arguments.length; i++) {
+            var re = new RegExp('\\{' + (i - 1) + '\\}', 'gm');
+            str = str.replace(re, arguments[i]);
+        }
+        return str;
+    }
+    $(document).ready(function () {
+        var matches = [];
+        var tr = '';
+        for (var i = 0; i < A.length; i++) {
+            var m = A[i];
+            b = [];
+            // 开赛时间
+            b.push(m[11] + ' ' + m[10]);
+            // 联赛
+            b.push(B[m[1]][1]);
+            // 不在关注范围内或者已经完场就跳过该比赛
+            if(careMatches.indexOf(b[1]) < 0) {
+                continue;
+            }
+            // 主队 [排名]
+            b.push(String.format('{0} [{1}]',m[4],m[21]));
+            // 客队 [排名]
+            b.push(String.format('{0} [{1}]',m[7],m[22]));
+            // 参考盘口
+            b.push(String.format('{0}',(m[25]!= undefined) ?m[25]:'暂无'));
+            matches.push(b);
+            link = String.format("<a href='/odds/nowscore/{0}/?home={1}&guest={2}' target='_blank'>查看</a>", m[0],m[4],m[7]);
+            linkEuro = String.format("<a href='/odds/nowscore/{0}/euro/?home={1}&guest={2}' target='_blank'>欧赔</a>", m[0],m[4],m[7]);
+            at = String.format("<td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td align='center'>{4}</td><td align='center'>{5}</td><td align='center'>{6}</td>", b[0], b[1], b[2], b[3],b[4], link,linkEuro);
+            tr = String.format("{0}<tr>{1}</tr>", tr, at);
+        }
+        var table = String.format("{0}", tr);
+        $('#tb_body').html(table);
+    });
+}
+</script>
+<script type="text/javascript" src="http://live1.nowscore.com/data/sc{{ page_number }}.js?{{ current_time }}" charset='utf-8'></script>
+
+<body>
+    <table border='1'>
+        <tr>
+            <th align='center'>时间</th>
+            <th align='center'>联赛</th>
+            <th align='center'>主队</th>
+            <th align='center'>客队</th>
+            <th align='center'>盘口</th>
+            <th align='center'>指数</th>
+            <th align='center'>欧赔</th>
+        </tr>
+        <tbody id='tb_body'></tbody>
+    </table>
+</body>
+
+</html>

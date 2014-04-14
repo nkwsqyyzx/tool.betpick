@@ -29,9 +29,9 @@ function ShowBf() {
                 continue;
             }
             // 主队 [排名]
-            b.push(String.format('{0} [{1}]',m[4],m[21]));
+            b.push(String.format('{0} <sup>[{1}]</sup>',m[4],m[21]));
             // 客队 [排名]
-            b.push(String.format('{0} [{1}]',m[7],m[22]));
+            b.push(String.format('{0} <sup>[{1}]</sup>',m[7],m[22]));
             // 参考盘口
             b.push(String.format('{0}',(m[25]!= undefined) ?m[25]:'暂无'));
             matches.push(b);

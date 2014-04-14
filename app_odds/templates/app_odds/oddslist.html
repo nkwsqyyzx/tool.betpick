@@ -15,18 +15,6 @@ function toggle(id) {
     }
 }
 
-String.format = function () {
-    if (arguments.length == 0) {
-        return null;
-    }
-    var str = arguments[0];
-    for (var i = 1; i < arguments.length; i++) {
-        var re = new RegExp('\\{' + (i - 1) + '\\}', 'gm');
-        str = str.replace(re, arguments[i]);
-    }
-    return str;
-}
-
 function formatData(obj) {
     r = "<chart><series>{0}</series><graphs><graph gid='1' visible_in_legend='false'>{1}</graph></graphs></chart>";
 

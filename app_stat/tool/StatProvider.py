@@ -2,9 +2,9 @@
 # from app_odds.tool.MatchOdds import MatchOdds,Odds
 # from app_odds.tool.HtmlCache import HtmlCache
 
-from HtmlCache import HtmlCache
+from app_stat.tool.HtmlCache import HtmlCache
 
-cache = HtmlCache(basepath='data/')
+cache = HtmlCache(basepath='bin/statics/')
 timeout = 2*24*60*60
 
 from bs4 import BeautifulSoup
@@ -57,7 +57,8 @@ def GetStatics(matchid):
     # 获取比赛统计数据
     # (时间,对阵双方,比分,半场比分,射门,射正,角球,首先达到3角球,首先达到5角球,首先达到7角球,犯规,黄牌,红牌,越位,控球率)
     url = 'http://www.simplesoccerstats.com/consoles/metrics/match.php?id={0}&espn=true'.format(matchid)
-    html = cache.getContent(url,timeout=timeout)
+    # 数据缓存4个月
+    html = cache.getContent(url,timeout=4*30*24*60*60)
     p = html.split('</br>')[1:-1]
     t = time.strftime('%Y-%m-%d',time.strptime(p[0],'%d %b %y'))
     p1 = p[1].replace('<strong>','').replace('</strong>','').split(' v ')

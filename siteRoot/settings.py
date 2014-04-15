@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'app_odds',
     'app_recs',
+    'app_stat',
 )
 
 MIDDLEWARE_CLASSES = (

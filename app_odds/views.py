@@ -22,11 +22,28 @@ def home(request):
     return HttpResponse(html)
 
 from app_odds.tool.NowScoreOddsProvider import NowScoreOddsProvider
+from datetime import datetime, timedelta
 def nowscore_odds(request,mid):
     home = request.GET.get('home')
     guest = request.GET.get('guest')
+    t = request.GET.get('t')
+    if t:
+        minutes = int(t.split(':')[0]) * 60 + int(t.split(':')[1])
+        now = datetime.now()
+        delta = minutes - now.hour * 60 - now.minute
+        if delta <= 30:
+            m = 5 * 60;
+        elif delta <= 60:
+            m = 10 * 60;
+        elif delta < 120:
+            m = 15 * 60;
+        else:
+            delta = 30 * 60;
+    else:
+        delta = 7 * 24 * 60 * 60;
+
+    rs = NowScoreOddsProvider(mid,timeout=delta).getResult()
     oddslist = []
-    rs = NowScoreOddsProvider(mid).getResult()
     for r in rs.odds:
         oddslist.append(r)
 

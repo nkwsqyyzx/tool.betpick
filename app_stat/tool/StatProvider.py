@@ -1,8 +1,8 @@
 # -*- coding: UTF8 -*-
-# from app_odds.tool.MatchOdds import MatchOdds,Odds
-# from app_odds.tool.HtmlCache import HtmlCache
-
-from app_stat.tool.HtmlCache import HtmlCache
+if __name__ == "__main__":
+    from HtmlCache import HtmlCache
+else:
+    from app_stat.tool.HtmlCache import HtmlCache
 
 cache = HtmlCache(basepath='bin/statics/')
 timeout = 2*24*60*60
@@ -32,6 +32,19 @@ def GetMatchesLink(leagueId):
                 uri = "http://www.simplesoccerstats.com/consoles/metrics/matches.php?home=" + homeTeam + "&away=" + awayTeam + "&HMC=" + homeMC + "&HTC=" + homeTC + "&AMC=" + awayMC + "&ATC=" + awayTC + "&hora=" + hora + "&espn=" + espn
                 matches.append((homeTeam,awayTeam,uri))
     return matches
+
+def GetLeagues():
+    # 获取所有支持的联赛
+    leagues = []
+    url = 'http://www.simplesoccerstats.com/consoles/index.php?lge=0'
+    html = cache.getContent(url,timeout=timeout)
+    soup = BeautifulSoup(html)
+    sel_League = soup.find('select',{'id':'sel_League'})
+    if sel_League:
+        for option in sel_League.findAll('option'):
+            value = option['value']
+            leagues.append((option.get_text().strip(),value))
+    return leagues
 
 def GetMatchesByLink(link):
     # 从对阵链接中获取对应比赛的统计链接

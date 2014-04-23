@@ -1,0 +1,19 @@
+{% load staticfiles %}
+<html xmlns="http://www.w3.org/1999/xhtml">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<head>
+    <title>
+        比赛列表
+    </title>
+</head>
+
+<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+<script type="text/javascript" src='{% static "tools/helper.js" %}'></script>
+
+<body>
+    {% for item in matches %}
+        <li>{{ item.0 }}&nbsp<a href='/stat/l/{{ item.2 }}/'>vs</a>&nbsp{{ item.1 }}</li>
+    {% endfor %}
+</body>
+
+</html>

@@ -22,9 +22,19 @@ def stat_league(request):
     leagues = StatProvider.GetLeagues()
     return render_to_response('app_stat/templates/app_stat/leagues.html',locals())
 
-def stat_match(request,mid):
-    return HttpResponse(mid)
+def stat_match(request,link,home,away):
+    flag = 'espn=true' in link;
+    home = home.replace('_',' ')
+    away = away.replace('_',' ')
+    homeList,awayList = StatProvider.GetMatchesByLink(link)
+    homeStatics = []
+    for i in homeList:
+        homeStatics.append(StatProvider.GetStatics(matchid=i,flag=flag))
+    awayStatics = []
+    for i in awayList:
+        awayStatics.append(StatProvider.GetStatics(matchid=i,flag=flag))
+    return render_to_response('app_stat/templates/app_stat/against_stat.html',locals())
 
-def stat_league_matches(request,leagueId):
+def stat_league_matches(request,leagueId,league):
     matches = StatProvider.GetMatchesLink(leagueId=leagueId)
     return render_to_response('app_stat/templates/app_stat/leagues_matches.html',locals())

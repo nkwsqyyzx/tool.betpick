@@ -1,0 +1,178 @@
+{% load staticfiles %}
+<html xmlns="http://www.w3.org/1999/xhtml">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<head>
+    <title>
+        {{ home }} vs {{ away }} 数据对比
+    </title>
+</head>
+
+<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+<script type="text/javascript" src='{% static "tools/helper.js" %}'></script>
+
+<script type="text/javascript">
+var d = {};
+d.home = [];
+d.away = [];
+{% for item in homeStatics %}
+a = {};
+a.date = '{{ item.0 }}';
+a.h = [ '{{ item.1.team }}', '{{ item.1.score }}', '{{ item.1.halfScore }}', '{{ item.1.shots }}', '{{ item.1.shotsOn }}', '{{ item.1.corners }}', '{{ item.1.R3 }}', '{{ item.1.R5 }}', '{{ item.1.R7 }}', '{{ item.1.possession }}', ];
+a.a = [ '{{ item.2.team }}', '{{ item.2.score }}', '{{ item.2.halfScore }}', '{{ item.2.shots }}', '{{ item.2.shotsOn }}', '{{ item.2.corners }}', '{{ item.2.R3 }}', '{{ item.2.R5 }}', '{{ item.2.R7 }}', '{{ item.2.possession }}', ];
+d.home.push(a);
+{% endfor %}
+{% for item in awayStatics %}
+a = {};
+a.date = '{{ item.0 }}';
+a.h = [ '{{ item.1.team }}', '{{ item.1.score }}', '{{ item.1.halfScore }}', '{{ item.1.shots }}', '{{ item.1.shotsOn }}', '{{ item.1.corners }}', '{{ item.1.R3 }}', '{{ item.1.R5 }}', '{{ item.1.R7 }}', '{{ item.1.possession }}', ];
+a.a = [ '{{ item.2.team }}', '{{ item.2.score }}', '{{ item.2.halfScore }}', '{{ item.2.shots }}', '{{ item.2.shotsOn }}', '{{ item.2.corners }}', '{{ item.2.R3 }}', '{{ item.2.R5 }}', '{{ item.2.R7 }}', '{{ item.2.possession }}', ];
+d.away.push(a);
+{% endfor %}
+
+function tag(team,h,a){
+    var t = parseInt(h[1]) - parseInt(a[1]);
+    if (t == 0){
+        return ' <font color="green">D</font>';
+    }
+    isHome = (team == h[0]);
+    isBig = (t > 0);
+    return ((isHome && isBig) || (!isHome && !isBig)) ? ' <font color="red">W</font>' : ' <font color="blue">L</font>';
+}
+
+function table(sel,arr,team){
+    html = [];
+    for (var i = 0;i<arr.length;i++){
+        m  = arr[i];
+        html.push('<tr>');
+        html.push('<td rowspan="2">' + m.date + tag(team,m.h,m.a) + ' </td>');
+        html.push('<td>' + m.h[0] + '</td>');
+        for (var j = 1; j < m.h.length ; j++){
+            html.push('<td align="center">' + m.h[j] + '</td>');
+        }
+        html.push('</tr>');
+
+        html.push('<tr>');
+        html.push('<td>' + m.a[0] + '</td>');
+        for (var j = 1; j < m.a.length ; j++){
+            html.push('<td align="center">' + m.a[j] + '</td>');
+        }
+        html.push('</tr>');
+    }
+    $(sel).html(html.join(''));
+}
+
+function colorTeam(team,s){
+    if (s == team){
+        return String.format('<font color="green">{0}</font>',s);
+    }
+    return s;
+}
+
+function colorResult(r){
+    if (r == 'W'){
+        return '<font color="red">W</font>';
+    }
+    if (r == 'D'){
+        return '<font color="green">D</font>';
+    }
+    if (r == 'L'){
+        return '<font color="blue">L</font>';
+    }
+    else{
+        return r;
+    }
+}
+
+function table1(sel,arr,team,isHome,flag){
+    html = [];
+    html.push('<table cellspacing="0" cellpadding="0" border="1px">');
+    html.push('<th>Date</th>');
+    html.push('<th>Home</th>');
+    html.push('<th>Away</th>');
+    html.push('<th>FT</th>');
+    html.push('<th>HT</th>');
+    html.push('<th>ST</th>');
+    html.push('<th>SO</th>');
+    html.push('<th>CO</th>');
+    html.push('<th>R3</th>');
+    html.push('<th>R5</th>');
+    html.push('<th>R7</th>');
+    html.push('<th>PS</th>');
+    html.push('<th>Re</th>');
+    html.push('<tbody id="tbleft">');
+    for (var i = 0; i < arr.length ; i++){
+        m  = arr[i];
+        if (flag){
+            if (isHome && m.h[0] != team) continue;
+            if (!isHome && m.a[0] != team) continue;
+        }
+        html.push('<tr>');
+        html.push('<td>' + m.date.substring(2,10) + '</td>');
+        html.push('<td align="center">' + colorTeam(team,m.h[0]) + '</td>');
+        html.push('<td align="center">' + colorTeam(team,m.a[0]) + '</td>');
+        html.push('<td align="center"><font color="red">' + m.h[1] + '-' + m.a[1] + '</font></td>');
+        for (var j = 2; j < 6 ; j++){
+            html.push('<td align="center">' + m.h[j] + '-' + m.a[j] + '</td>');
+        }
+        for (var j = 6;j < 9 ; j++){
+            b = [];
+            if (m.h[0] == team) b = m.h;
+            else b = m.a;
+            html.push('<td align="center">' + colorResult(b[j]) + '</td>');
+        }
+        html.push('<td align="center">' + m.h[9].substring(0,2) + '-' + m.a[9].substring(0,2) + '</td>');
+        html.push('<td align="center">' + tag(team,m.h,m.a) + '</td>');
+        html.push('</tr>');
+    }
+    html.push('</tbody></table>');
+    $(sel).html(html.join(''));
+}
+
+$(document).ready(function(){
+    table1('#left',d.home,'{{ home }}',true,false);
+    table1('#right',d.away,'{{ away }}',false,false);
+});
+
+st = {};
+function toggleH() {
+    st.H = st.H == undefined ? true:(!st.H);
+    table1('#left',d.home,'{{ home }}',true,st.H);
+}
+function toggleA() {
+    st.A = st.A == undefined ? true:(!st.A);
+    table1('#right',d.away,'{{ away }}',false,st.A);
+}
+</script>
+
+<style type="text/css">
+.wrap {
+    float:left;
+    width:100%;
+    margin:0 auto;
+}
+.left_col {
+    float:left;
+    width:50%;
+}
+.right_col {
+    float:right;
+    width:50%;
+}
+</style>
+
+<body>
+    <div class='wrap'>
+        <div class='left_col'>
+            <a href='javascript:toggleH()'>切换</a>
+            <div id='left'>
+            </div>
+        </div>
+        <div class='right_col'>
+            <a href='javascript:toggleA()'>切换</a>
+            <div id='right'>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

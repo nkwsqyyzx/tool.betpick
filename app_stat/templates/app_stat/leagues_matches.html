@@ -3,7 +3,7 @@
 <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <head>
     <title>
-        比赛列表
+        {{ league }}比赛列表
     </title>
 </head>
 
@@ -12,7 +12,7 @@
 
 <body>
     {% for item in matches %}
-        <li>{{ item.0 }}&nbsp<a href='/stat/l/{{ item.2 }}/'>vs</a>&nbsp{{ item.1 }}</li>
+        <li>{{ item.0 }}&nbsp<a target='_blank' href='/stat/l/u={{ item.2|urlencode }}&h={{ item.0 }}&a={{ item.1 }}'>vs</a>&nbsp{{ item.1 }}</li>
     {% endfor %}
 </body>
 

@@ -12,7 +12,7 @@
 
 <body>
     {% for item in leagues %}
-        <li><a href='/stat/l/{{ item.1 }}/'>{{ item.0 }}</a></li>
+        <li><a target='_blank' href='/stat/l/{{ item.1 }}&n={{ item.0|urlencode }}/'>{{ item.0 }}</a></li>
     {% endfor %}
 </body>
 

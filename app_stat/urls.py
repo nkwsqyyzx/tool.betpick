@@ -7,6 +7,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
     # simplesoccerstats
     url(r'^$','app_stat.views.stat_home',name='stat_home'),
+    # Simple soccer states
     url(r'^l/$','app_stat.views.stat_league',name='stat_league'),
     url(r'^l/(\d+)&n=(.+)/$','app_stat.views.stat_league_matches',name='stat_league_matches'),
     url(r'^l/u=(.+)&h=(.+)&a=(.+)/$','app_stat.views.stat_match',name='stat_match'),

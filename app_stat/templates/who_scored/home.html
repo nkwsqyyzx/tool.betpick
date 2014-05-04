@@ -1,0 +1,58 @@
+{% load staticfiles %}
+<html xmlns="http://www.w3.org/1999/xhtml">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<head>
+    <title>
+        数据对比
+    </title>
+</head>
+
+<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+<script type="text/javascript" src='{% static "tools/helper.js" %}'></script>
+
+<body>
+    <div id='left'>
+        <table cellspacing="0" cellpadding="0" border='1px'>
+            <th>比赛日期</th>
+            <th>Team</th>
+            <th>FT</th>
+            <th>HT</th>
+            <th>ST</th>
+            <th>SO</th>
+            <th>CO</th>
+            <th>R3</th>
+            <th>R5</th>
+            <th>R7</th>
+            <th>PS</th>
+            {% for item in stats %}
+                <tr>
+                    <td rowspan='2'>{{ item.0 }}</td>
+                    <td>{{ item.1.team }}</td>
+                    <td align='center'>{{ item.1.score }}</td>
+                    <td align='center'>{{ item.1.halfScore }}</td>
+                    <td align='center'>{{ item.1.shots }}</td>
+                    <td align='center'>{{ item.1.shotsOn }}</td>
+                    <td align='center'>{{ item.1.corners }}</td>
+                    <td align='center'>{{ item.1.R3 }}</td>
+                    <td align='center'>{{ item.1.R5 }}</td>
+                    <td align='center'>{{ item.1.R7 }}</td>
+                    <td align='center'>{{ item.1.possession }}</td>
+                </tr>
+                <tr>
+                    <td>{{ item.2.team }}</td>
+                    <td align='center'>{{ item.2.score }}</td>
+                    <td align='center'>{{ item.2.halfScore }}</td>
+                    <td align='center'>{{ item.2.shots }}</td>
+                    <td align='center'>{{ item.2.shotsOn }}</td>
+                    <td align='center'>{{ item.2.corners }}</td>
+                    <td align='center'>{{ item.2.R3 }}</td>
+                    <td align='center'>{{ item.2.R5 }}</td>
+                    <td align='center'>{{ item.2.R7 }}</td>
+                    <td align='center'>{{ item.2.possession }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    <div>
+</body>
+
+</html>

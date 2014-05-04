@@ -4,35 +4,61 @@ if __name__ == "__main__":
 else:
     from app_stat.tool.HtmlCache import HtmlCache
 
-cache = HtmlCache(basepath='bin/statics/')
+cache = HtmlCache(basepath='bin/whoscored/')
 timeout = 2 * 24 * 60 * 60
 
 from bs4 import BeautifulSoup
-def GetMatchesLink(leagueId):
+def GetMatchesLink(leagueURL='Regions/252/Tournaments/7/England-Championship'):
     # 从每个联赛中获取下一轮比赛对阵链接
-    pass
+    url = 'http://www.whoscored.com/{0}'.format(leagueURL)
+    html, cached = cache.getContentWithAgent(url=url, encoding='gbk')
+    js = html.split('calendar.parameter()), ')[1].split(']);')[0].replace('\r\n', '')
+    js = 'var matches = {0}];'.format(js)
+
+    aa = html.split("DataStore.prime('history', ")[1].split(',[[')[1].split(']);')[0].replace('\r\n', '')
+    aa = 'var id_match = [[{0}];'.format(aa)
+    return js, aa
 
 def GetLeagues():
     # 获取所有支持的联赛
-    pass
+    html, cached = cache.getContentWithAgent(url='http://www.whoscored.com/', encoding='gbk')
+    d = html.split('var allRegions = ')[1].split('var favoriteTournaments ')[0].replace('\r\n', '')
+    return 'var allLegues = {0}'.format(d)
 
-def GetMatchesByClub(link='http://www.whoscored.com/Teams/278/Fixtures/Italy-Genoa'):
+def GetMatchesByClub(clubId=15):
     # 从球队链接中获取其所有比赛号
-    # => list of matchid
-    html = cache.getContentWithAgent(url=link, encoding='gbk')
+    # => list of (matchid,home,away)
+    link = 'http://www.whoscored.com/Teams/{0}/Fixtures/'.format(clubId)
+    html, cached = cache.getContentWithAgent(url=link, encoding='gbk')
     hs = html.split('parametersCopy), ')
     js = hs[1].split('var teamFixtures ')[0].replace('\r\n', '').replace('[[', '').replace(']]);', '').strip().split('],[')
     matchids = []
     for j in js:
-        j = j.split(',')[0]
-        matchids.append(j)
+        j = j.split(',')
+        l = j[16].replace("'", "")
+        # 这里简单的排除友谊赛
+        if l != 'Club Friendlies':
+            matchids.append((j[0], j[5], j[8]))
     return matchids
 
 def GetJSDataByMatchid(matchid='758062'):
     url = 'http://www.whoscored.com/Matches/{0}/MatchReport'.format(matchid)
-    html = cache.getContentWithAgent(url=url, encoding='gbk')
-    d = html.split('var matchStats = ')[1].split('var liveTeamStatsInfoConfig =')[0].replace('\r\n','')
-    d = 'var matchStats = {0}'.format(d)
+    html, cached = cache.getContentWithAgent(url=url, encoding='gbk')
+    if not cached:
+        time.sleep(2)
+    if 'var matchStats = ' in html:
+        d = html.split('var matchStats = ')[1]
+        d = d.split('var liveTeamStatsInfoConfig =')[0].replace('\r\n', '').replace(';', '').strip()
+        return d
+
+import time
+def GetClubStatics(clubId):
+    matchids = GetMatchesByClub(clubId)
+    d = []
+    for (matchid, home, away) in matchids[:6]:
+        r = GetJSDataByMatchid(matchid)
+        if r:
+            d.append((home, away, r))
     return d
 
 import time
@@ -140,5 +166,5 @@ class Stat:
 
 
 if __name__ == "__main__":
-    d = GetJSDataByMatchid()
-    print(d)
+    GetJSDataByMatchid(720817)
+

@@ -9,7 +9,6 @@ class HtmlCache:
     def __init__(self, basepath):
         self.basepath = basepath
 
-
     def getCachedHtml(self, url, encoding, timeout):
         m = hashlib.md5()
         m.update(url.encode())
@@ -26,24 +25,24 @@ class HtmlCache:
             html, fpath = self.getCachedHtml(url, encoding, timeout)
 
             if html:
-                return html
+                return html, True
             else:
                 html = urllib.request.urlopen(url).read().decode(encoding, errors='ignore')
                 if not os.path.exists(self.basepath):
                     os.makedirs(self.basepath)
                 with codecs.open(fpath, 'w', encoding) as outfile:
                     outfile.write(html)
-                return html
+                return html, False
         else:
             html = urllib.request.urlopen(url).read().decode(encoding)
-            return html
+            return html, False
 
     def getContentWithAgent(self, url, encoding='utf-8', cache=1, timeout=30 * 60, userAgent='Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)'):
         if cache:
             html, fpath = self.getCachedHtml(url, encoding, timeout)
 
             if html:
-                return html
+                return html, True
             else:
                 request = urllib.request.Request(url)
                 request.add_header('User-Agent', userAgent)
@@ -53,10 +52,10 @@ class HtmlCache:
                     os.makedirs(self.basepath)
                 with codecs.open(fpath, 'w', encoding) as outfile:
                     outfile.write(html)
-                return html
+                return html, False
         else:
             request = urllib.request.Request(url)
             request.add_header('User-Agent', userAgent)
             r = urllib.request.urlopen(request)
             html = r.read().decode(encoding, errors='ignore')
-            return html
+            return html, False

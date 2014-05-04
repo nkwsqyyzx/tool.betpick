@@ -5,15 +5,15 @@ else:
     from app_stat.tool.HtmlCache import HtmlCache
 
 cache = HtmlCache(basepath='bin/statics/')
-timeout = 2*24*60*60
+timeout = 2 * 24 * 60 * 60
 
 from bs4 import BeautifulSoup
 def GetMatchesLink(leagueId):
     # 从每个联赛中获取下一轮比赛对阵链接
     url = 'http://www.simplesoccerstats.com/consoles/index.php?lge={0}'.format(leagueId)
-    html = cache.getContent(url,timeout=timeout)
+    html, cached = cache.getContent(url, timeout=timeout)
     soup = BeautifulSoup(html)
-    sel_Match = soup.find('select',{'id':'sel_Match'})
+    sel_Match = soup.find('select', {'id':'sel_Match'})
     if "var espn = 'true';" in html:
         espn = 'true'
     else:
@@ -24,7 +24,7 @@ def GetMatchesLink(leagueId):
             value = o['value']
             if value:
                 v = value.split(':')
-                m = (0,v[1],v[2],v[3],v[4],v[5],v[6])
+                m = (0, v[1], v[2], v[3], v[4], v[5], v[6])
                 homeTeam = m[1].replace(' ', "_")
                 awayTeam = m[2].replace(' ', "_")
                 homeMC = m[3]
@@ -33,51 +33,51 @@ def GetMatchesLink(leagueId):
                 awayTC = m[6]
                 hora = 'both'
                 uri = "http://www.simplesoccerstats.com/consoles/metrics/matches.php?home=" + homeTeam + "&away=" + awayTeam + "&HMC=" + homeMC + "&HTC=" + homeTC + "&AMC=" + awayMC + "&ATC=" + awayTC + "&hora=" + hora + "&espn=" + espn
-                matches.append((homeTeam,awayTeam,uri))
+                matches.append((homeTeam, awayTeam, uri))
     return matches
 
 def GetLeagues():
     # 获取所有支持的联赛
     leagues = []
     url = 'http://www.simplesoccerstats.com/consoles/index.php?lge=0'
-    html = cache.getContent(url,timeout=timeout)
+    html, cached = cache.getContent(url, timeout=timeout)
     soup = BeautifulSoup(html)
-    sel_League = soup.find('select',{'id':'sel_League'})
+    sel_League = soup.find('select', {'id':'sel_League'})
     if sel_League:
         for option in sel_League.findAll('option'):
             value = option['value']
-            leagues.append((option.get_text().strip(),value))
+            leagues.append((option.get_text().strip(), value))
     return leagues
 
 def GetMatchesByLink(link):
     # 从对阵链接中获取对应比赛的统计链接
-    html = cache.getContent(link,timeout=timeout)
+    html, cached = cache.getContent(link, timeout=timeout)
     soup = BeautifulSoup(html)
     idshome = []
-    tds = soup.find('div',{'class':'matchboxL'}).findAll('td',{'class':'matchid'})
+    tds = soup.find('div', {'class':'matchboxL'}).findAll('td', {'class':'matchid'})
     for td in tds:
         mid = td['id']
         if mid:
             idshome.append(mid)
 
     idsaway = []
-    tds = soup.find('div',{'class':'matchboxR'}).findAll('td',{'class':'matchid'})
+    tds = soup.find('div', {'class':'matchboxR'}).findAll('td', {'class':'matchid'})
     for td in tds:
         mid = td['id']
         if mid:
             idsaway.append(mid)
-    return (idshome,idsaway)
+    return (idshome, idsaway)
 
 import time
-def GetStatics(matchid,flag):
+def GetStatics(matchid, flag):
     # 获取比赛统计数据
     # (时间,对阵双方,比分,半场比分,射门,射正,角球,首先达到3角球,首先达到5角球,首先达到7角球,犯规,黄牌,红牌,越位,控球率)
-    url = 'http://www.simplesoccerstats.com/consoles/metrics/match.php?id={0}&espn={1}'.format(matchid,('true' if flag else 'false'))
+    url = 'http://www.simplesoccerstats.com/consoles/metrics/match.php?id={0}&espn={1}'.format(matchid, ('true' if flag else 'false'))
     # 数据缓存4个月
-    html = cache.getContent(url,timeout=4*30*24*60*60)
+    html, cached = cache.getContent(url, timeout=4 * 30 * 24 * 60 * 60)
     p = html.split('</br>')[1:-1]
-    t = time.strftime('%Y-%m-%d',time.strptime(p[0],'%d %b %y'))
-    p1 = p[1].replace('<strong>','').replace('</strong>','').split(' v ')
+    t = time.strftime('%Y-%m-%d', time.strptime(p[0], '%d %b %y'))
+    p1 = p[1].replace('<strong>', '').replace('</strong>', '').split(' v ')
     p2 = p[2].split(' FT ')
     p3 = p[3].split(' HT ')
     p4 = p[4].split(' Shots ')
@@ -93,14 +93,14 @@ def GetStatics(matchid,flag):
         p13 = p[13].split(' Offsides ')
         p14 = p[14].split(' Possession ')
     else:
-        p7 = ['-','-']
-        p8 = ['-','-']
-        p9 = ['-','-']
+        p7 = ['-', '-']
+        p8 = ['-', '-']
+        p9 = ['-', '-']
         p10 = p[7].split(' Fouls ')
         p11 = p[8].split(' Yellow Cards ')
         p12 = p[9].split(' Red Cards ')
-        p13 = ['-','-']
-        p14 = ['-','-']
+        p13 = ['-', '-']
+        p14 = ['-', '-']
 
 
     home = Stat()
@@ -135,7 +135,7 @@ def GetStatics(matchid,flag):
     away.offsides = p13[1]
     away.possession = p14[1]
 
-    return (t,home,away)
+    return (t, home, away)
 
 class Stat:
     def __init__(self):
@@ -179,4 +179,4 @@ if __name__ == "__main__":
     #     t,h,a = GetStatics(matchid=matchid)
     #     print(t,h,a)
     #     break;
-    t,h,a = GetStatics(matchid='862',flag=False)
+    t, h, a = GetStatics(matchid='862', flag=False)

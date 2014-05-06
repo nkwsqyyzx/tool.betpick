@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 def GetMatchesLink(leagueURL='Regions/252/Tournaments/7/England-Championship'):
     # 从每个联赛中获取下一轮比赛对阵链接
     url = 'http://www.whoscored.com/{0}'.format(leagueURL)
-    html, cached = cache.getContentWithAgent(url=url, encoding='gbk')
+    html, cached = cache.getContentWithAgent(url=url, encoding='gbk',timeout=4*60*60)
     js = html.split('calendar.parameter()), ')[1].split(']);')[0].replace('\r\n', '')
     js = 'var matches = {0}];'.format(js)
 
@@ -55,11 +55,11 @@ import time
 def GetClubStatics(clubId):
     matchids = GetMatchesByClub(clubId)
     d = []
-    for (matchid, home, away) in matchids[:6]:
+    for (matchid, home, away) in matchids:
         r = GetJSDataByMatchid(matchid)
         if r:
             d.append((home, away, r))
-    return d
+    return d[::-1]
 
 import time
 def GetStatics(matchid, flag):

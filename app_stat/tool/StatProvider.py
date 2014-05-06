@@ -76,6 +76,8 @@ def GetStatics(matchid, flag):
     # 数据缓存4个月
     html, cached = cache.getContent(url, timeout=4 * 30 * 24 * 60 * 60)
     p = html.split('</br>')[1:-1]
+    if not p[0]:
+        return
     t = time.strftime('%Y-%m-%d', time.strptime(p[0], '%d %b %y'))
     p1 = p[1].replace('<strong>', '').replace('</strong>', '').split(' v ')
     p2 = p[2].split(' FT ')

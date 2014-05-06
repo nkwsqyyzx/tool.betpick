@@ -15,7 +15,10 @@ class HtmlCache:
         md5value = m.hexdigest()
         html = None
         fpath = '{0}{1}.html'.format(self.basepath, md5value)
-        if os.path.exists(fpath) and ((time.time() - os.path.getmtime(fpath) < timeout) and timeout or True):
+        if os.path.exists(fpath):
+            outofdate = time.time() - os.path.getmtime(fpath) > timeout
+            if outofdate:
+                return html, fpath
             with codecs.open(fpath, 'r', encoding) as f:
                 html = f.read()
         return html, fpath

@@ -12,7 +12,8 @@ def stat_home(request):
     context = []
     for matchid in homeMatches:
         t, h, a = StatProvider.GetStatics(matchid=matchid)
-        context.append((t, h, a))
+        if t:
+            context.append((t, h, a))
     c = Context({'stats': context})
     t = get_template('app_stat/templates/simple_soccer_stat/home.html')
     html = t.render(c)
@@ -28,10 +29,14 @@ def stat_match(request, link, home, away):
     homeList, awayList = StatProvider.GetMatchesByLink(link)
     homeStatics = []
     for i in homeList:
-        homeStatics.append(StatProvider.GetStatics(matchid=i, flag=flag))
+        m = StatProvider.GetStatics(matchid=i, flag=flag)
+        if m:
+            homeStatics.append(m)
     awayStatics = []
     for i in awayList:
-        awayStatics.append(StatProvider.GetStatics(matchid=i, flag=flag))
+        m = StatProvider.GetStatics(matchid=i, flag=flag)
+        if m:
+            awayStatics.append(m)
     return render_to_response('app_stat/templates/simple_soccer_stat/against_stat.html', locals())
 
 def stat_league_matches(request, leagueId, league):

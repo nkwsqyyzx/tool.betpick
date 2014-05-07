@@ -1,11 +1,37 @@
 {% load staticfiles %}
 <html xmlns="http://www.w3.org/1999/xhtml">
 <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+
+
+<meta http-equiv="content-language" content="en" />
+
+
+
 <head>
     <title>
         联赛集合
     </title>
 </head>
+<style type="text/css">
+body {
+    width:900px;
+    text-align:center;
+    margin:0 auto;
+}
+a {
+    float: left;
+    width: 150;
+    height: 40px;
+    border: solid 1px #ababab;
+    text-align: center;
+    z-index: 1;
+    position: relative;
+}
+a:hover {
+    border-color: #777777;
+    z-index: 2;
+}
+</style>
 
 <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
 <script type="text/javascript" src='{% static "tools/helper.js" %}'></script>
@@ -162,14 +188,22 @@
         var html = [];
         for (var i = 0; i < cared.length; i++) {
             m = cared[i];
-            html.push("<li><a target='_blank' href='/stat/w/lm/" + escape(m.url) + "/" + m.name + "'>" + m.name + "</a></li>");
+            html.push("<a target='_blank' href='/stat/w/lm/" + escape(m.url) + "/" + m.name + "'>" + m.name + "</a>");
         }
-        $('#lgs').html(html.join(''));
+        $('#whoscored').html(html.join(''));
     });
 </script>
 
 <body>
-<div id='lgs'></div>
+    <li>以下是simplesoccerstat.com支持的联赛</li>
+    <div id='simple_soccer_stat'>
+        {% for item in simple_soccer_stat %}
+            <a target='_blank' href='/stat/l/{{ item.1 }}&n={{ item.0|urlencode }}/'>{{ item.0 }}</a>
+        {% endfor %}
+    </div>
+    <div style='clear:both;'></div>
+    <li>以下是whoscored.com支持的联赛</li>
+    <div id='whoscored'></div>
 </body>
 
 </html>

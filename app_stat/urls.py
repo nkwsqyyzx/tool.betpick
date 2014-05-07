@@ -5,7 +5,7 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    # simplesoccerstats
+    # 统计网站主入口
     url(r'^$', 'app_stat.views.stat_home', name='stat_home'),
     # Simple soccer states
     url(r'^l/$', 'app_stat.views.stat_league', name='stat_league'),

@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 def GetMatchesLink(leagueURL='Regions/252/Tournaments/7/England-Championship'):
     # 从每个联赛中获取下一轮比赛对阵链接
     url = 'http://www.whoscored.com/{0}'.format(leagueURL)
-    html, cached = cache.getContentWithAgent(url=url, encoding='gbk',timeout=4*60*60)
+    html, cached = cache.getContentWithAgent(url=url, encoding='utf-8',timeout=4*60*60)
     js = html.split('calendar.parameter()), ')[1].split(']);')[0].replace('\r\n', '')
     js = 'var matches = {0}];'.format(js)
 
@@ -21,7 +21,7 @@ def GetMatchesLink(leagueURL='Regions/252/Tournaments/7/England-Championship'):
 
 def GetLeagues():
     # 获取所有支持的联赛
-    html, cached = cache.getContentWithAgent(url='http://www.whoscored.com/', encoding='gbk')
+    html, cached = cache.getContentWithAgent(url='http://www.whoscored.com/', encoding='utf-8')
     d = html.split('var allRegions = ')[1].split('var favoriteTournaments ')[0].replace('\r\n', '')
     return 'var allLegues = {0}'.format(d)
 
@@ -29,7 +29,7 @@ def GetMatchesByClub(clubId=15):
     # 从球队链接中获取其所有比赛号
     # => list of (matchid,home,away)
     link = 'http://www.whoscored.com/Teams/{0}/Fixtures/'.format(clubId)
-    html, cached = cache.getContentWithAgent(url=link, encoding='gbk')
+    html, cached = cache.getContentWithAgent(url=link, encoding='utf-8')
     hs = html.split('parametersCopy), ')
     js = hs[1].split('var teamFixtures ')[0].replace('\r\n', '').replace('[[', '').replace(']]);', '').strip().split('],[')
     matchids = []
@@ -43,7 +43,7 @@ def GetMatchesByClub(clubId=15):
 
 def GetJSDataByMatchid(matchid='758062'):
     url = 'http://www.whoscored.com/Matches/{0}/MatchReport'.format(matchid)
-    html, cached = cache.getContentWithAgent(url=url, encoding='gbk')
+    html, cached = cache.getContentWithAgent(url=url, encoding='utf-8')
     if not cached:
         time.sleep(2)
     if 'var matchStats = ' in html:

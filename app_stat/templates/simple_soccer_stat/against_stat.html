@@ -102,6 +102,9 @@ function table1(sel,arr,team,isHome,flag){
     html.push('<tbody id="tbleft">');
     for (var i = 0; i < arr.length ; i++){
         m  = arr[i];
+        if (m.h[0]!= team && m.a[0]!= team){
+            continue;
+        }
         if (flag){
             if (isHome && m.h[0] != team) continue;
             if (!isHome && m.a[0] != team) continue;

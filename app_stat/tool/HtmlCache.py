@@ -20,7 +20,10 @@ class HtmlCache:
             if outofdate:
                 return html, fpath
             with codecs.open(fpath, 'r', encoding) as f:
-                html = f.read()
+                try:
+                    html = f.read()
+                except UnicodeDecodeError:
+                    pass
         return html, fpath
 
     def getContent(self, url, encoding='utf-8', cache=1, timeout=30 * 60):

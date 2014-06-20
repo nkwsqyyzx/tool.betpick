@@ -28,15 +28,17 @@ function ShowBf() {
             if(index < 0) {
                 continue;
             }
+            m4 = m[4].replace(/<font color=#880000>/,'').replace(/<\/font>/,'');
+            m7 = m[7].replace(/<font color=#880000>/,'').replace(/<\/font>/,'');
             // 主队 [排名]
-            b.push(String.format('{0} <sup>[{1}]</sup>',m[4],m[21]));
+            b.push(String.format('{0} <sup>[{1}]</sup>',m4,m[21]));
             // 客队 [排名]
-            b.push(String.format('{0} <sup>[{1}]</sup>',m[7],m[22]));
+            b.push(String.format('{0} <sup>[{1}]</sup>',m7,m[22]));
             // 比分
             b.push(String.format('{0}:{1}',m[13],m[14]));
             matches.push(b);
-            link = String.format("<a href='/odds/nowscore/{0}/?home={1}&guest={2}' target='_blank'>查看</a>", m[0],m[4],m[7]);
-            linkEuro = String.format("<a href='/odds/nowscore/{0}/euro/?home={1}&guest={2}' target='_blank'>欧赔</a>", m[0],m[4],m[7]);
+            link = String.format("<a href='/odds/nowscore/{0}/?home={1}&guest={2}' target='_blank'>查看</a>", m[0],m4,m7);
+            linkEuro = String.format("<a href='/odds/nowscore/{0}/euro/?home={1}&guest={2}' target='_blank'>欧赔</a>", m[0],m4,m7);
             at = String.format("<td align='center' bgcolor='{0}'><font color='white'>{1}</font></td><td>{2}</td><td>{3}</td><td>{4}</td><td align='center'>{5}</td><td align='center'>{6}</td><td align='center'>{7}</td>",careColors[index][1], b[0], b[1], b[2], b[3],b[4], link,linkEuro);
             tr = String.format("{0}<tr bgcolor='{1}'>{2}</tr>", tr,careColors[index][0], at);
         }

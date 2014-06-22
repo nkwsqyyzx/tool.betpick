@@ -5,15 +5,6 @@
 <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
 <script type="text/javascript" src='{% static "tools/helper.js" %}'></script>
 <script language="javascript">
-function toggle(id) {
-    var ele = document.getElementById(id);
-    if (ele.style.display == "block") {
-        ele.style.display = "none";
-    } else {
-        ele.style.display = "block";
-    }
-}
-
 String.format = function () {
     if (arguments.length == 0) {
         return null;
@@ -79,22 +70,6 @@ function drawEuroList(obj,i) {
     showTooltip(obj);
 }
 </script>
-
-<style type="text/css">
-.wrap {
-    float:left;
-    width:100%;
-    margin:0 auto;
-}
-.left_col {
-    float:left;
-    width:30%;
-}
-.right_col {
-    float:right;
-    width:70%;
-}
-</style>
 
 <body>
 

@@ -13,7 +13,7 @@ class HtmlCache:
             md5value = m.hexdigest()
 
             fpath = './data/{0}.html'.format(md5value)
-            if os.path.exists(fpath) and ((time.time() - os.path.getmtime(fpath) < timeout) and timeout or True):
+            if os.path.exists(fpath) and timeout != None and (time.time() - os.path.getmtime(fpath) < timeout):
                 with codecs.open(fpath,'r',encoding) as f:
                     return f.read()
             else:

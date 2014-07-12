@@ -13,5 +13,7 @@ urlpatterns = patterns('',
     # WhoScored
     url(r'^w/$', 'app_stat.views.w_stat_league', name='w_stat_league'),
     url(r'^w/lm/(.+)/(.+)/$', 'app_stat.views.w_stat_league_matches', name='w_stat_league_matches'),
+    url(r'^w/(\d+)/$', 'app_stat.views.w_stat_club_matches', name='w_stat_club_matches'),
+    url(r'^w/(\d+)/(\d+)/$', 'app_stat.views.w_stat_club_matches2', name='w_stat_club_matches2'),
     url(r'^w/ms/(.+)/(.+)/(.+)/(.+)/$', 'app_stat.views.w_stat_match', name='w_stat_match'),
 )

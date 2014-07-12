@@ -69,3 +69,47 @@ def w_stat_match(request, homeid, awayid, home, away):
 def w_stat_league_matches(request, leagueURL, league):
     matches, id_match = WhoScoredProvider.GetMatchesLink(leagueURL=leagueURL)
     return render_to_response('app_stat/templates/who_scored/leagues_matches.html', locals())
+
+
+def w_stat_club_matches(request, clubId):
+    homeList = WhoScoredProvider.GetClubStatics(clubId=clubId)
+    awayList = []
+    homeJS = ['var home = [];']
+    for a, b, c in homeList:
+        homeJS.append('mm = {};')
+        homeJS.append('mm.home = ' + a + ';')
+        homeJS.append('mm.away = ' + b + ';')
+        homeJS.append('mm.data = ' + c + ';')
+        homeJS.append('home.push(mm);')
+    homeJS = '\n'.join(homeJS)
+    awayJS = ['var away = [];']
+    for a, b, c in awayList:
+        awayJS.append('mm = {};')
+        awayJS.append('mm.home = ' + a + ';')
+        awayJS.append('mm.away = ' + b + ';')
+        awayJS.append('mm.data = ' + c + ';')
+        awayJS.append('away.push(mm);')
+    awayJS = '\n'.join(awayJS)
+    return render_to_response('app_stat/templates/who_scored/against_stat.html', locals())
+
+
+def w_stat_club_matches2(request, homeId, guestId):
+    homeList = WhoScoredProvider.GetClubStatics(clubId=homeId)
+    awayList = WhoScoredProvider.GetClubStatics(clubId=guestId)
+    homeJS = ['var home = [];']
+    for a, b, c in homeList:
+        homeJS.append('mm = {};')
+        homeJS.append('mm.home = ' + a + ';')
+        homeJS.append('mm.away = ' + b + ';')
+        homeJS.append('mm.data = ' + c + ';')
+        homeJS.append('home.push(mm);')
+    homeJS = '\n'.join(homeJS)
+    awayJS = ['var away = [];']
+    for a, b, c in awayList:
+        awayJS.append('mm = {};')
+        awayJS.append('mm.home = ' + a + ';')
+        awayJS.append('mm.away = ' + b + ';')
+        awayJS.append('mm.data = ' + c + ';')
+        awayJS.append('away.push(mm);')
+    awayJS = '\n'.join(awayJS)
+    return render_to_response('app_stat/templates/who_scored/against_stat.html', locals())

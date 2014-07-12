@@ -36,10 +36,14 @@ def GetMatchesByClub(clubId=15):
     for j in js:
         j = j.split(',')
         l = j[16].replace("'", "")
+
+        if j[1] == '1' and (j[26] == '1' or j[27] == '1') and (not matchHasTerminatedUnexpectedly(j[14])):
         # 这里简单的排除友谊赛
-        if l != 'Club Friendlies':
             matchids.append((j[0], j[5], j[8]))
     return matchids
+
+def matchHasTerminatedUnexpectedly(status):
+    return status == 'Abd' or status == "Post" or status == "Can" or status == "Susp"
 
 def GetJSDataByMatchid(matchid='758062'):
     url = 'http://www.whoscored.com/Matches/{0}/MatchReport'.format(matchid)

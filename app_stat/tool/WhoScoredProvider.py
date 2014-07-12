@@ -35,10 +35,9 @@ def GetMatchesByClub(clubId=15):
     matchids = []
     for j in js:
         j = j.split(',')
-        l = j[16].replace("'", "")
 
         if j[1] == '1' and (j[26] == '1' or j[27] == '1') and (not matchHasTerminatedUnexpectedly(j[14])):
-        # 这里简单的排除友谊赛
+        # 根据who_scored网站的规则判断是否有赛后报告
             matchids.append((j[0], j[5], j[8]))
     return matchids
 

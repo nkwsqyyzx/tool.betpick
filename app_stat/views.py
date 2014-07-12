@@ -1,21 +1,21 @@
-from django.http import HttpResponse
-from django.shortcuts import render
 from django.shortcuts import render_to_response
-from django.template import Template, Context
-from django.template.loader import get_template
 
 # Create your views here.
 from app_stat.tool import StatProvider
+
+
 def stat_home(request):
     simple_soccer_stat = StatProvider.GetLeagues()
     return render_to_response('app_stat/templates/home.html', locals())
+
 
 def stat_league(request):
     leagues = StatProvider.GetLeagues()
     return render_to_response('app_stat/templates/simple_soccer_stat/leagues.html', locals())
 
+
 def stat_match(request, link, home, away):
-    flag = 'espn=true' in link;
+    flag = 'espn=true' in link
     home = home.replace('_', ' ')
     away = away.replace('_', ' ')
     homeList, awayList = StatProvider.GetMatchesByLink(link)
@@ -31,19 +31,23 @@ def stat_match(request, link, home, away):
             awayStatics.append(m)
     return render_to_response('app_stat/templates/simple_soccer_stat/against_stat.html', locals())
 
+
 def stat_league_matches(request, leagueId, league):
     matches = StatProvider.GetMatchesLink(leagueId=leagueId)
     return render_to_response('app_stat/templates/simple_soccer_stat/leagues_matches.html', locals())
 
 
 from app_stat.tool import WhoScoredProvider
+
+
 def w_stat_league(request):
     return render_to_response('app_stat/templates/who_scored/leagues.html')
+
 
 def w_stat_match(request, homeid, awayid, home, away):
     homeList = WhoScoredProvider.GetClubStatics(clubId=homeid)
     awayList = WhoScoredProvider.GetClubStatics(clubId=awayid)
-    homeJS = ['var home = [];'];
+    homeJS = ['var home = [];']
     for a, b, c in homeList:
         homeJS.append('mm = {};')
         homeJS.append('mm.home = ' + a + ';')
@@ -51,7 +55,7 @@ def w_stat_match(request, homeid, awayid, home, away):
         homeJS.append('mm.data = ' + c + ';')
         homeJS.append('home.push(mm);')
     homeJS = '\n'.join(homeJS)
-    awayJS = ['var away = [];'];
+    awayJS = ['var away = [];']
     for a, b, c in awayList:
         awayJS.append('mm = {};')
         awayJS.append('mm.home = ' + a + ';')
@@ -60,6 +64,7 @@ def w_stat_match(request, homeid, awayid, home, away):
         awayJS.append('away.push(mm);')
     awayJS = '\n'.join(awayJS)
     return render_to_response('app_stat/templates/who_scored/against_stat.html', locals())
+
 
 def w_stat_league_matches(request, leagueURL, league):
     matches, id_match = WhoScoredProvider.GetMatchesLink(leagueURL=leagueURL)

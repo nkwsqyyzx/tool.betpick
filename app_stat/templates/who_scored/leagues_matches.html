@@ -32,49 +32,35 @@ Date.prototype.format = function (fmt) { //author: meizz
     return fmt;
 }
 
-function homeAway(m,id_match){
-    h = m[5];
-    a = m[8];
-    ih = -1;
-    ia = -1;
-    for (var i = 0;i<id_match.length;i++){
-        if (id_match[i][2] == h){
-            ih = i;
-        }
-        if (id_match[i][2] == a){
-            ia = i;
-        }
-    }
-    return [ih,ia];
+function extractIdAndName(m){
+    return [m[4],m[5],m[7],m[8]];
 }
-    $(document).ready(function(){
-        var html = [];
-        //[721424,1,'Tuesday, Apr 29 2014','19:45',160,'Charlton',0,27,'Watford',1,'3 : 1','1 : 0',1,1,'FT','1',0,1,1,0]
-        //[7800,14,'Leicester',1,'313303313303330330013333333331133331131301333',1,'1333333031333313331303',1,'33013033003333313131133']
-        html.push('<table>');
-        html.push('<th><tr>');
-        html.push(String.format('<td align="center">{0}</td>','时间'));
-        html.push(String.format('<td align="center">{0}</td>','主队'));
-        html.push(String.format('<td align="center">{0}</td>','客队'));
-        html.push(String.format('<td align="center">{0}</td>','查看'));
-        html.push('</tr></th>');
-        for (var i = 0; i < matches.length; i++) {
-            m = matches[i];
-            ha = homeAway(m,id_match);
-            h = id_match[ha[0]];
-            a = id_match[ha[1]];
-            d = new Date(Date.parse(m[2])).format('yyyy-MM-dd');
-            link = String.format('/stat/w/ms/{0}/{1}/{2}/{3}/',h[1],a[1],escape(h[2]),escape(a[2]));
-            html.push('<tr>');
-            html.push(String.format('<td align="center">{0}</td>',d));
-            html.push(String.format('<td align="center">{0}</td>',h[2]));
-            html.push(String.format('<td align="center">{0}</td>',a[2]));
-            html.push(String.format('<td align="center"><a target="_blank" href="{0}">查看</a></td>',link));
-            html.push('</tr>');
-        }
-        html.push('</table>');
-        $('#matches').html(html.join(''));
-    });
+$(document).ready(function(){
+    var html = [];
+    //[721424,1,'Tuesday, Apr 29 2014','19:45',160,'Charlton',0,27,'Watford',1,'3 : 1','1 : 0',1,1,'FT','1',0,1,1,0]
+    //[7800,14,'Leicester',1,'313303313303330330013333333331133331131301333',1,'1333333031333313331303',1,'33013033003333313131133']
+    html.push('<table>');
+    html.push('<th><tr>');
+    html.push(String.format('<td align="center">{0}</td>','时间'));
+    html.push(String.format('<td align="center">{0}</td>','主队'));
+    html.push(String.format('<td align="center">{0}</td>','客队'));
+    html.push(String.format('<td align="center">{0}</td>','查看'));
+    html.push('</tr></th>');
+    for (var i = 0; i < matches.length; i++) {
+        m = matches[i];
+        ha = extractIdAndName(m);
+        d = new Date(Date.parse(m[2])).format('yyyy-MM-dd');
+        link = String.format('/stat/w/ms/{0}/{1}/{2}/{3}/',ha[0],ha[2],escape(ha[1]),escape(ha[3]));
+        html.push('<tr>');
+        html.push(String.format('<td align="center">{0}</td>',d));
+        html.push(String.format('<td align="center">{0}</td>',ha[1]));
+        html.push(String.format('<td align="center">{0}</td>',ha[3]));
+        html.push(String.format('<td align="center"><a target="_blank" href="{0}">查看</a></td>',link));
+        html.push('</tr>');
+    }
+    html.push('</table>');
+    $('#matches').html(html.join(''));
+});
 </script>
 
 <body>

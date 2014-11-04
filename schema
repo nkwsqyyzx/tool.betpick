@@ -1,0 +1,9 @@
+1.队表，队信息，包含队id，队名称
+2.队比赛表，包含有统计信息的比赛列表，共三列，比赛id，主队id，客队id
+3.比赛表，包含比赛信息及总体的统计数据，同三列，比赛id，比赛时间，比赛统计信息
+
+
+CREATE TABLE t_team(id INTEGER PRIMARY KEY, name TEXT);
+CREATE TABLE t_team_match(mid INTEGER PRIMARY KEY, time INTEGER, home_id INTEGER, guest_id INTEGER);
+CREATE TABLE t_match(id INTEGER PRIMARY KEY, statistics TEXT);
+CREATE TABLE t_t_m_t_{tid}(mid INTEGER PRIMARY KEY, time INTEGER)

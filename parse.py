@@ -68,12 +68,13 @@ for i in a:
 # 需要解决双引号插入数据库的问题
 for i in a:
     r = i[1][0][0]
-    t = time.strptime(r[4], '%m/%d/%Y %H:%M:%S')
-    t = time.mktime(time.localtime(time.mktime(t) + 8 * 60 * 60))
-    t = int(t)
     r = tr(str(i[1]).replace('None', ''))
-    sql = 'insert into t_match values({0}, {1}, "{2}")'.format(i[0], t, r)
-    cursor.execute(sql)
+    sql = 'insert into t_match values({0}, "{1}")'.format(i[0], r)
+    try:
+        cursor.execute(sql)
+    except Exception as e:
+        print(i[0], e, r)
+        break;
 
 def tr(s):
     i1 = 0
@@ -86,7 +87,8 @@ def tr(s):
             break;
         s1 = r[0:i1]
         s2 = r[i1:i2+1]
-        s2 = s2.replace('"', "'").replace("'", '-')
+        s2 = s2.replace("'", '-')
+        s2 = s2.replace('"', "'")
         s3 = r[i2+1:]
         r = s1 + s2 + s3
         i1 = i2 + 2

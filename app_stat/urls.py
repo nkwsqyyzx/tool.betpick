@@ -11,9 +11,10 @@ urlpatterns = patterns('',
     url(r'^l/(\d+)&n=(.+)/$', 'app_stat.views.stat_league_matches', name='stat_league_matches'),
     url(r'^l/u=(.+)&h=(.+)&a=(.+)/$', 'app_stat.views.stat_match', name='stat_match'),
     # WhoScored
+    # 支持统计数据的联赛列表
     url(r'^w/$', 'app_stat.views.w_stat_league', name='w_stat_league'),
+    # 联赛中的比赛列表
     url(r'^w/lm/(.+)/(.+)/$', 'app_stat.views.w_stat_league_matches', name='w_stat_league_matches'),
-    url(r'^w/(\d+)/$', 'app_stat.views.w_stat_club_matches', name='w_stat_club_matches'),
-    url(r'^w/(\d+)/(\d+)/$', 'app_stat.views.w_stat_club_matches2', name='w_stat_club_matches2'),
+    # 两支球队的统计数据列表
     url(r'^w/ms/(.+)/(.+)/(.+)/(.+)/$', 'app_stat.views.w_stat_match', name='w_stat_match'),
 )

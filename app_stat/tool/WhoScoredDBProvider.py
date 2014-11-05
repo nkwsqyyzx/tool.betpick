@@ -13,177 +13,137 @@ timeout = 2 * 24 * 60 * 60
 def GetMatchesLink(leagueURL='Regions/252/Tournaments/7/England-Championship'):
     # 从每个联赛中获取下一轮比赛对阵链接
     url = 'http://www.whoscored.com/{0}'.format(leagueURL)
-    html, cached = cache.getContentWithAgent(url=url, encoding='gbk',timeout=4*60*60)
+    html, cached = cache.getContentWithAgent(url=url, encoding='gbk',timeout=24*60*60)
     js = html.split('calendar.parameter()), ')[1].split(']);')[0].replace('\r\n', '')
-    jsArray = '{0}]'.format(js)
-    allMatches = eval(jsArray)
+    js = 'var matches = {0}];'.format(js)
 
-    conn = sqlite3.connect('db')
-    cursor = conn.cursor()
-    # 存储队名相关信息到数据库
-    # 后续可以优化把这块省掉
-    for m in allMatches:
-        match_id = m[0]
-        home_id = m[4]
-        home_name = m[5]
-        guest_id = m[7]
-        guest_name = m[8]
-        sql = 'insert or ignore into t_team values({0},"{1}")'
-        cursor.execute(sql.format(home_id, home_name))
-        cursor.execute(sql.format(guest_id, guest_name))
-
-        t = m[2] + " " + m[3]
-        t = time.strptime(t, '%A, %b %d %Y %H:%M')
-        t = int(time.mktime(time.localtime(time.mktime(t) + 8 * 60 * 60)))
-        sql = 'insert or ignore into t_team_match_{0} values({1}, {2})'
-        cursor.execute(sql.format(home_id, match_id, t))
-        cursor.execute(sql.format(guest_id, match_id, t))
-    conn.commit()
-
-    return js, None
+    aa = 'var id_match = [[{0}];'.format(']')
+    return js, aa
 
 def GetMatchesByClub(clubId=15):
     # 从球队链接中获取其所有比赛号
     # => list of (matchid,home,away)
     link = 'http://www.whoscored.com/Teams/{0}/Fixtures/'.format(clubId)
     html, cached = cache.getContentWithAgent(url=link, encoding='gbk',timeout=3*24*60*60)
-    hs = html.split('parametersCopy), ')
-    js = hs[1].split('var teamFixtures ')[0].replace('\r\n', '').replace('[[', '').replace(']]);', '').strip().split('],[')
-    matchids = []
-    for j in js:
-        j = j.split(',')
-
-        if j[1] == '1' and (j[26] == '1' or j[27] == '1') and (not matchHasTerminatedUnexpectedly(j[14])):
-        # 根据who_scored网站的规则判断是否有赛后报告
-            matchids.append((j[0], j[5], j[8]))
-    return matchids
+    # if cached:
+    #        return
+    # 保存对阵列表
+    conn = sqlite3.connect('db')
+    cursor = conn.cursor()
+    try:
+        hs = html.split('parametersCopy), ')
+        js = hs[1].split('var teamFixtures ')[0].replace('\r\n', '')[0:-2]
+        js = js.replace(',,',',None,')
+        sql = 'insert or ignore into t_team values({0},"{1}")'
+        allMatches = eval(js)
+        for j in allMatches:
+            # 根据who_scored网站的规则判断是否有赛后报告
+            if j[1] == 1 and (j[26] == 1 or j[27] == 1) and (not matchHasTerminatedUnexpectedly(j[14])):
+                pass
+            else:
+                continue
+            m = j
+            # 保存对阵信息
+            match_id = m[0]
+            home_id = m[4]
+            home_name = m[5]
+            guest_id = m[7]
+            guest_name = m[8]
+            t = m[2] + " " + m[3]
+            t = time.strptime(t, '%d-%m-%Y %H:%M')
+            t = int(time.mktime(time.localtime(time.mktime(t) + 8 * 60 * 60)))
+            cursor.execute(sql.format(home_id, home_name))
+            cursor.execute(sql.format(guest_id, guest_name))
+            cursor.execute('insert or ignore into t_team_match_{0} values({1}, {2})'.format(home_id, match_id, t))
+            cursor.execute('insert or ignore into t_team_match_{0} values({1}, {2})'.format(guest_id, match_id, t))
+        conn.commit()
+    except Exception as e:
+        print("GetMatchesByClub", clubId, e)
+        conn.rollback()
+    cursor.close()
+    conn.close()
 
 def matchHasTerminatedUnexpectedly(status):
     return status == 'Abd' or status == "Post" or status == "Can" or status == "Susp"
 
-def GetJSDataByMatchid(matchid='758062'):
-    url = 'http://www.whoscored.com/Matches/{0}/MatchReport'.format(matchid)
-    html, cached = cache.getContentWithAgent(url=url, encoding='gbk',timeout=30*24*60*60)
-    if not cached:
-        time.sleep(2)
-    if 'var matchStats = ' in html:
-        d = html.split('var matchStats = ')[1]
-        d = d.split('var liveTeamStatsInfoConfig =')[0].replace('\r\n', '').replace(';', '').strip()
-        return d
+def tr(s):
+    i1 = 0
+    i2 = 1
+    r = s
+    while True:
+        i1 = r.find('"', i1)
+        i2 = r.find('"', i1 + 1)
+        if i1 < 0 or i2 < 0:
+            break;
+        s1 = r[0:i1]
+        s2 = r[i1:i2+1]
+        s2 = s2.replace("'", '-')
+        s2 = s2.replace('"', "'")
+        s3 = r[i2+1:]
+        r = s1 + s2 + s3
+        i1 = i2 + 2
+    return r
+
+
+def GetJSDataByMatchid(conn, matchid='758062'):
+    cursor = conn.cursor()
+    sql = 'select * from t_match where id={0}'
+    cursor.execute(sql.format(matchid))
+    d = None
+    row = cursor.fetchone()
+    if not row:
+        try:
+            url = 'http://www.whoscored.com/Matches/{0}/MatchReport'.format(matchid)
+            html, cached = cache.getContentWithAgent(url=url, encoding='gbk',timeout=30*24*60*60)
+            if 'var matchStats = ' in html:
+                d = html.split('var matchStats = ')[1]
+                d = d.split('var liveTeamStatsInfoConfig =')[0]
+                d = d.replace('\r', '')
+                d = d.replace('\n', '')
+                d = d.replace(';', '')
+                i = d.find(']')
+                m = d[3:i].split(',')
+                match_id = matchid
+                home_id = m[0]
+                home_name = m[2]
+                guest_id = m[1]
+                guest_name = m[3]
+                t = m[4]
+                t = time.strptime(t, "'%m/%d/%Y %H:%M:%S'")
+                t = int(time.mktime(time.localtime(time.mktime(t) + 8 * 60 * 60)))
+                sql = 'insert or ignore into t_team values({0},"{1}")'
+                cursor.execute(sql.format(home_id, home_name))
+                cursor.execute(sql.format(guest_id, guest_name))
+                sql = 'insert into t_match values({0}, "{1}")'
+                cursor.execute(sql.format(match_id, tr(d)))
+        except Exception as e:
+            print(url, d, e)
+    else:
+        d = row[1]
+
+    cursor.close()
+    return d
 
 import time
 def GetClubStatics(clubId):
-    matchids = GetMatchesByClub(clubId)
+    GetMatchesByClub(clubId)
+    conn = sqlite3.connect('db')
+    cursor = conn.cursor()
+    sql = 'select t.id, tm.statistics from (select id from t_team_match_{0} order by time desc limit 10) t left join t_match tm on tm.id = t.id'
+    cursor.execute(sql.format(clubId))
     d = []
-    for (matchid, home, away) in matchids:
-        r = GetJSDataByMatchid(matchid)
-        if r:
-            d.append((home, away, r))
-    return d[::-1]
-
-import time
-def GetStatics(matchid, flag):
-    # 获取比赛统计数据
-    # (时间,对阵双方,比分,半场比分,射门,射正,角球,首先达到3角球,首先达到5角球,首先达到7角球,犯规,黄牌,红牌,越位,控球率)
-    url = 'http://www.simplesoccerstats.com/consoles/metrics/match.php?id={0}&espn={1}'.format(matchid, ('true' if flag else 'false'))
-    # 数据缓存4个月
-    html = cache.getContent(url, timeout=4 * 30 * 24 * 60 * 60)
-    p = html.split('</br>')[1:-1]
-    t = time.strftime('%Y-%m-%d', time.strptime(p[0], '%d %b %y'))
-    p1 = p[1].replace('<strong>', '').replace('</strong>', '').split(' v ')
-    p2 = p[2].split(' FT ')
-    p3 = p[3].split(' HT ')
-    p4 = p[4].split(' Shots ')
-    p5 = p[5].split(' Shots on Target ')
-    p6 = p[6].split(' Corners ')
-    if ' Race to 3 ' in html:
-        p7 = p[7].split(' Race to 3 ')
-        p8 = p[8].split(' Race to 5 ')
-        p9 = p[9].split(' Race to 7 ')
-        p10 = p[10].split(' Fouls ')
-        p11 = p[11].split(' Yellow Cards ')
-        p12 = p[12].split(' Red Cards ')
-        p13 = p[13].split(' Offsides ')
-        p14 = p[14].split(' Possession ')
-    else:
-        p7 = ['-', '-']
-        p8 = ['-', '-']
-        p9 = ['-', '-']
-        p10 = p[7].split(' Fouls ')
-        p11 = p[8].split(' Yellow Cards ')
-        p12 = p[9].split(' Red Cards ')
-        p13 = ['-', '-']
-        p14 = ['-', '-']
-
-
-    home = Stat()
-    home.team = p1[0]
-    home.score = p2[0]
-    home.halfScore = p3[0]
-    home.shots = p4[0]
-    home.shotsOn = p5[0]
-    home.corners = p6[0]
-    home.R3 = p7[0]
-    home.R5 = p8[0]
-    home.R7 = p9[0]
-    home.foul = p10[0]
-    home.yellow = p11[0]
-    home.red = p12[0]
-    home.offsides = p13[0]
-    home.possession = p14[0]
-
-    away = Stat()
-    away.team = p1[1]
-    away.score = p2[1]
-    away.halfScore = p3[1]
-    away.shots = p4[1]
-    away.shotsOn = p5[1]
-    away.corners = p6[1]
-    away.R3 = p7[1]
-    away.R5 = p8[1]
-    away.R7 = p9[1]
-    away.foul = p10[1]
-    away.yellow = p11[1]
-    away.red = p12[1]
-    away.offsides = p13[1]
-    away.possession = p14[1]
-
-    return (t, home, away)
-
-class Stat:
-    def __init__(self):
-        # 球队
-        self.team = ''
-        # 进球数
-        self.score = ''
-        # 半场进球数
-        self.halfScore = ''
-        # 射门
-        self.shots = ''
-        # 射正
-        self.shotsOn = ''
-        # 角球
-        self.corners = ''
-        # 首先达到3角球
-        self.R3 = ''
-        # 首先达到5角球
-        self.R5 = ''
-        # 首先达到7角球
-        self.R7 = ''
-        # 犯规
-        self.foul = ''
-        # 黄牌数
-        self.yellow = ''
-        # 红牌数
-        self.red = ''
-        # 越位数
-        self.offsides = ''
-        # 控球率
-        self.possession = ''
-
-    def __repr__(self):
-        return str({"team":self.team , "score":self.score , "halfScore":self.halfScore , "shots":self.shots , "shotsOn":self.shotsOn , "corners":self.corners , "R3":self.R3 , "R5":self.R5 , "R7":self.R7 , "foul":self.foul , "yellow":self.yellow , "red":self.red , "offsides":self.offsides , "possession":self.possession})
-
+    flag = False
+    for row in cursor:
+        if not row[1]:
+            flag = True
+            d.append(GetJSDataByMatchid(conn, row[0]))
+        else:
+            d.append(row[1])
+    if flag:
+        conn.commit()
+    cursor.close()
+    conn.close()
+    return d
 
 if __name__ == "__main__":
     GetJSDataByMatchid(720817)

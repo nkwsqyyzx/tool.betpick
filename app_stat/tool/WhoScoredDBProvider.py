@@ -64,7 +64,14 @@ def GetMatchesByClub(clubId=15):
             except Exception as e:
                 cursor.execute('create table if not exists t_team_match_{0}(id INTEGER PRIMARY KEY, time INTEGER)'.format(guest_id))
                 cursor.execute('insert or ignore into t_team_match_{0} values({1}, {2})'.format(guest_id, match_id, t))
-        conn.commit()
+            for i in range(0, 10):
+                try:
+                    conn.commit()
+                    break;
+                except Exception as e:
+                    print(i, e)
+                    time.sleep(1)
+
     except Exception as e:
         print("GetMatchesByClub", clubId, e)
         conn.rollback()
@@ -125,7 +132,7 @@ def GetJSDataByMatchid(conn, matchid='758062'):
                 sql = 'insert or ignore into t_match values({0}, "{1}")'
                 cursor.execute(sql.format(match_id, tr(d)))
         except Exception as e:
-            print(url, d, e)
+            print(url, e)
     else:
         d = row[1]
 
@@ -148,7 +155,13 @@ def GetClubStatics(clubId):
         else:
             d.append(row[1])
     if flag:
-        conn.commit()
+        for i in range(0, 10):
+            try:
+                conn.commit()
+                break;
+            except Exception as e:
+                print(i, e)
+                time.sleep(1)
     cursor.close()
     conn.close()
     return d

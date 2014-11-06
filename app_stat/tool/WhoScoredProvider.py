@@ -30,6 +30,8 @@ def GetMatchesByClub(clubId=15):
     # => list of (matchid,home,away)
     link = 'http://www.whoscored.com/Teams/{0}/Fixtures/'.format(clubId)
     html, cached = cache.getContentWithAgent(url=link, encoding='gbk',timeout=3*24*60*60)
+    if not html:
+        return []
     hs = html.split('parametersCopy), ')
     js = hs[1].split('var teamFixtures ')[0].replace('\r\n', '').replace('[[', '').replace(']]);', '').strip().split('],[')
     matchids = []

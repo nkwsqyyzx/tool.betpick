@@ -52,12 +52,16 @@ class HtmlCache:
             else:
                 request = urllib.request.Request(url)
                 request.add_header('User-Agent', userAgent)
-                r = urllib.request.urlopen(request)
-                html = r.read().decode(encoding, errors='ignore')
-                if not os.path.exists(self.basepath):
-                    os.makedirs(self.basepath)
-                with codecs.open(fpath, 'w', encoding) as outfile:
-                    outfile.write(html)
+                html = ''
+                try:
+                    r = urllib.request.urlopen(request)
+                    html = r.read().decode(encoding, errors='ignore')
+                    if not os.path.exists(self.basepath):
+                        os.makedirs(self.basepath)
+                    with codecs.open(fpath, 'w', encoding) as outfile:
+                        outfile.write(html)
+                except Exception as e:
+                    print(url, e)
                 return html, False
         else:
             request = urllib.request.Request(url)

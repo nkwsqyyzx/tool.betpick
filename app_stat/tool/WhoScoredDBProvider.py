@@ -129,7 +129,7 @@ def GetClubStatics(clubId):
     GetMatchesByClub(clubId)
     conn = sqlite3.connect('db')
     cursor = conn.cursor()
-    sql = 'select t.id, tm.statistics from (select id from t_team_match_{0} order by time desc limit 10) t left join t_match tm on tm.id = t.id'
+    sql = 'select t.id, tm.statistics from (select id from t_team_match_{0} order by time desc limit 15) t left join t_match tm on tm.id = t.id'
     cursor.execute(sql.format(clubId))
     d = []
     flag = False

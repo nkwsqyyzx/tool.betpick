@@ -54,8 +54,16 @@ def GetMatchesByClub(clubId=15):
             t = int(time.mktime(time.localtime(time.mktime(t) + 8 * 60 * 60)))
             cursor.execute(sql.format(home_id, home_name))
             cursor.execute(sql.format(guest_id, guest_name))
-            cursor.execute('insert or ignore into t_team_match_{0} values({1}, {2})'.format(home_id, match_id, t))
-            cursor.execute('insert or ignore into t_team_match_{0} values({1}, {2})'.format(guest_id, match_id, t))
+            try:
+                cursor.execute('insert or ignore into t_team_match_{0} values({1}, {2})'.format(home_id, match_id, t))
+            except Exception as e:
+                cursor.execute('create table if not exists t_team_match_{0}(id INTEGER PRIMARY KEY, time INTEGER)'.format(home_id))
+                cursor.execute('insert or ignore into t_team_match_{0} values({1}, {2})'.format(home_id, match_id, t))
+            try:
+                cursor.execute('insert or ignore into t_team_match_{0} values({1}, {2})'.format(guest_id, match_id, t))
+            except Exception as e:
+                cursor.execute('create table if not exists t_team_match_{0}(id INTEGER PRIMARY KEY, time INTEGER)'.format(guest_id))
+                cursor.execute('insert or ignore into t_team_match_{0} values({1}, {2})'.format(guest_id, match_id, t))
         conn.commit()
     except Exception as e:
         print("GetMatchesByClub", clubId, e)
@@ -114,7 +122,7 @@ def GetJSDataByMatchid(conn, matchid='758062'):
                 sql = 'insert or ignore into t_team values({0},"{1}")'
                 cursor.execute(sql.format(home_id, home_name))
                 cursor.execute(sql.format(guest_id, guest_name))
-                sql = 'insert into t_match values({0}, "{1}")'
+                sql = 'insert or ignore into t_match values({0}, "{1}")'
                 cursor.execute(sql.format(match_id, tr(d)))
         except Exception as e:
             print(url, d, e)

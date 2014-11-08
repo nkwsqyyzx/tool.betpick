@@ -4,6 +4,4 @@
 
 
 CREATE TABLE t_team(id INTEGER PRIMARY KEY, name TEXT);
-CREATE TABLE t_team_match(mid INTEGER PRIMARY KEY, time INTEGER, home_id INTEGER, guest_id INTEGER);
 CREATE TABLE t_match(id INTEGER PRIMARY KEY, statistics TEXT);
-CREATE TABLE t_t_m_t_{tid}(mid INTEGER PRIMARY KEY, time INTEGER)

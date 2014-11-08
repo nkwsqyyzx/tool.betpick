@@ -19,18 +19,12 @@ def src():
 def parseDataFromHtml(lines, result):
     match_id = 0
     data = []
-    '''
-    解析比赛id
-    '''
     for line in lines:
         if 'var gLoginUrl =' in line:
             line = line.split('/Matches/')[1]
             line = line.split('/MatchReport')[0]
             match_id = int(line)
             break
-    '''
-    解析统计数据
-    '''
     html = ''.join(lines)
     if 'var matchStats = ' in html:
         d = html.split('var matchStats = ')[1]
@@ -48,12 +42,13 @@ def h():
         i = i[1][0][0]
         d.append((i[0],i[2]))
         d.append((i[1],i[3]))
-    return d
+    return set(d)
 
 d = h()
 for i in d:
     try:
         cursor.execute('insert into t_team values({0}, "{1}")'.format(i[0], i[1]))
+        cursor.execute('create table if not exists t_team_match_{0}(id PRIMARY KEY INTEGER, time INTEGER);'.format(i[0]))
     except Exception as e:
         print(i, e)
 
@@ -65,7 +60,6 @@ for i in a:
     except Exception as e:
         print(r, e)
 
-# 需要解决双引号插入数据库的问题
 for i in a:
     r = i[1][0][0]
     r = tr(str(i[1]).replace('None', ''))

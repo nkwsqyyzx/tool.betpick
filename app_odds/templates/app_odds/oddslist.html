@@ -147,12 +147,30 @@ function euros(obj,ct,st,et){
     var m = [];
     ist = -1;
     var reverse = [];
+    var notOver = true;
     for(var i=0;i<obj.euro.length;i++){
-        reverse.splice(0,0,obj.euro[i]);
+        var ti = obj.euro[i];
+        var rt = ti[0];
+        // 如果跨年, 将后面的时间都加上12. 如果跨年跨度太大, 中间还是有bug的
+        if (notOver && i>0 && rt > reverse[0].rt) {
+            notOver = false;
+            for (var j=0; j<reverse.length;j++) {
+                var osz = reverse[j].rt;
+                var sz = (parseInt(osz.substring(0, 2))+12).toString();
+                var jrt = sz + osz.substring(2);
+                reverse[j].rt = jrt;
+            }
+        }
+        reverse.splice(0,0,{"ti":ti, "rt":rt});
+    }
+    if (!notOver) {
+        var sz = (parseInt(ct.substring(0, 2))+12).toString();
+        var cct = sz + ct.substring(2);
+        ct = cct;
     }
     for(var i=0;i<reverse.length;i++){
-        a = reverse[i];
-        if (a[0] < ct){
+        a = reverse[i].rt;
+        if (a < ct){
             continue;
         }
         ist = i;
@@ -176,7 +194,7 @@ function euros(obj,ct,st,et){
     }
 
     for(i = jst;i<jst+count && i < reverse.length;i++){
-        m.splice(0,0,reverse[i]);
+        m.splice(0,0,reverse[i].ti);
     }
 
     return {"ist":ist,"m":m};

@@ -15,7 +15,11 @@ function timeByOffset(origin,offset){
     date.setDate(parseInt(origin.substring(3,6)));
     date.setHours(parseInt(origin.substring(6,8)));
     date.setMinutes(parseInt(origin.substring(9,11)));
-    date.setSeconds(parseInt(origin.substring(12,14)));
+    if (origin.length > 11) {
+        date.setSeconds(parseInt(origin.substring(12,14)));
+    } else {
+        date.setSeconds(0);
+    }
 
     date.setSeconds(date.getSeconds()+offset);
 

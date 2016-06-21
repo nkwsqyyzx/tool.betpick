@@ -30,7 +30,7 @@ class NowScoreOddsProvider():
         self.timeout = timeout
 
     def __getOddsByCompanyId(self,cid):
-        url = 'http://live1.nowscore.com/odds/3in1Odds.aspx?companyid={1}&id={0}'.format(self.mid,cid)
+        url = 'http://score.nowscore.com/odds/3in1Odds.aspx?companyid={1}&id={0}'.format(self.mid,cid)
         return cache.getContent(url,timeout=self.timeout)
 
     def getResult(self,companyFilter = []):

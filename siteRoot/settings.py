@@ -61,7 +61,7 @@ WSGI_APPLICATION = 'siteRoot.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'G:/netdrive/baiduyun/data/db.db3'
+        'NAME': '/home/wsq/tool.betpick/db.db3'
     },
 }
 
